@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
     "build": "vite build",
-    "preview": "vite preview",
+    "serve": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "gh-pages": "^6.3.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }
