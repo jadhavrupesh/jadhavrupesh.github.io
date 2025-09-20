@@ -1,17 +1,13 @@
 {
   "name": "portfolio",
-  "homepage": "https://jadhavrupesh.github.io/portfolio",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "clean": "rm -rf dist",
-    "prebuild": "npm run clean",
     "build": "vite build",
-    "serve": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "preview": "vite preview",
+    "deploy": "git add . && git commit -m 'Deploy updates' && git push origin main"
   },
   "dependencies": {
     "@types/react-router-dom": "^5.3.3",
@@ -23,7 +19,6 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
-    "gh-pages": "^6.3.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }
