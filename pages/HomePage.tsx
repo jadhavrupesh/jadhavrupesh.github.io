@@ -42,6 +42,14 @@ const HomePage: React.FC = () => {
                 <div className="ml-4">
                     <h1 className={`text-xl font-medium ${getHeadingColor()} mb-1`}>{personalInfo.name}</h1>
                     <p className={`${getMutedColor()} text-sm`}>Senior Mobile Developer based in Mumbai</p>
+                    <a
+                        href="https://instagram.com/wtfrupesh"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`${getMutedColor()} text-xs underline hover:text-blue-500`}
+                    >
+                        Instagram: @wtfrupesh
+                    </a>
                 </div>
             </div>
 
