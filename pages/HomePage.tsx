@@ -35,7 +35,7 @@ const HomePage: React.FC = () => {
             {/* Profile Section */}
             <div className="flex items-center mb-8">
                 <img 
-                    src="assets/profile.jpg" 
+                    src="./profile.jpg"
                     alt="Rupesh Jadhav" 
                     className="w-16 h-16 rounded-full object-cover"
                 />
