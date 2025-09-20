@@ -38,13 +38,13 @@ const ContactPage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col justify-center items-center max-w-2xl mx-auto px-6 min-h-screen py-12">
-            <div className="text-left mb-8 max-w-lg w-full">
+        <div className="flex flex-col justify-center items-center max-w-lg mx-auto px-6 min-h-screen py-12">
+            <div className="text-left mb-8 w-full">
                 <h1 className={`text-xl font-medium ${headingColor()} mb-1`}>Contact</h1>
                 <p className={`${mutedColor()} text-sm`}>Get in touch with me</p>
             </div>
 
-            <div className="text-left max-w-lg w-full space-y-6">
+            <div className="text-left w-full space-y-6">
                 <div>
                     <p className={`${bodyColor()} leading-relaxed mb-3`}>Contact Details:</p>
                     <ul className={`${bodyColor()} space-y-1 text-sm`}>
