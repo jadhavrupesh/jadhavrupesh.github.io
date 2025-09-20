@@ -31,9 +31,9 @@ const HomePage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col justify-center items-start max-w-2xl mx-auto px-6 min-h-screen py-12">
+        <div className="flex flex-col justify-center items-center max-w-2xl mx-auto px-6 min-h-screen py-12">
             {/* Profile Section */}
-            <div className="flex items-center mb-8">
+            <div className="flex items-center mb-8 max-w-lg w-full">
                 <img 
                     src="./profile.jpg"
                     alt="Rupesh Jadhav" 

@@ -77,7 +77,7 @@ const ExperiencePage: React.FC = () => {
     };
 
     return (
-        <div className="py-20 md:py-24">
+        <div className="mx-auto w-full max-w-4xl px-6 py-20 md:py-24">
             {/* Professional Experience Section */}
             <div className="mb-16">
                 <h2 className={`text-2xl font-bold ${getTextColor()} mb-8`}>Professional Experience</h2>

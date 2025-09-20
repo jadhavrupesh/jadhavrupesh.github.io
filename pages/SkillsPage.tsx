@@ -77,7 +77,7 @@ const SkillsPage: React.FC = () => {
     };
 
     return (
-        <div className="py-20 md:py-24">
+        <div className="mx-auto w-full max-w-4xl px-6 py-20 md:py-24">
             <h2 className={`text-2xl font-bold ${getTextColor('text-gray-800', 'text-gray-200', 'text-gray-300', 'text-[#1F1F1F]', 'text-[#1F1F1F]')} mb-8 sticky top-0 ${getBgColor()} backdrop-blur-sm py-4 z-10`}>Skills</h2>
             <Skills items={skillData} />
         </div>
