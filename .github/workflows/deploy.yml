@@ -1,3 +1,6 @@
+# Publishes ./dist (Vite build). GitHub repo Settings → Pages → Build and deployment
+# must use "GitHub Actions", NOT "Deploy from a branch". Branch deploy serves raw
+# index.html (points at /index.tsx) and the app will not load.
 name: Deploy to GitHub Pages
 
 on:
