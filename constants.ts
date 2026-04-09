@@ -95,7 +95,7 @@ export const skillData: SkillCategory[] = [
     { title: "Languages", skills: ["Kotlin", "Java", "Dart", "C", "C++", "Python", "SQL", "JavaScript"] },
     { title: "Frameworks", skills: ["Android SDK", "Flutter", "Compose Multiplatform", "KMP", "Jetpack Compose"] },
     { title: "Architectures", skills: ["MVVM", "Clean Architecture", "MVC", "Multi-module", "LEGO-block"] },
-    { title: "Tools", skills: ["Android Studio", "VS Code", "Git", "Figma", "Jenkins", "Melos", "Mason", "Codemagic"] },
+    { title: "Tools", skills: ["Android Studio", "VS Code", "Cursor", "GitHub Copilot", "Claude Code","Git", "Figma", "Jenkins", "Melos", "Mason", "Codemagic"] },
     { title: "Backend/APIs", skills: ["Firebase", "Ktor", "REST-Api", "Razorpay", "Agora", "Room-DB"] },
     { title: "Testing/CI", skills: ["VAPT hardening", "performance tuning", "CI/CD", "code review"] },
 ];
