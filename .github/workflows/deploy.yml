@@ -23,13 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4  # ✅ v4, not v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4  # ✅ v4, not v6
         with:
-          node-version: '24'
-          cache: npm
+          node-version: '20'         # ✅ Use LTS (Node 20), Node 24 is not yet LTS
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -37,10 +37,9 @@ jobs:
       - name: Build
         run: npm run build
 
-      # JamesIves v4.8+ runs on Node 24; peaceiris/actions-gh-pages@v4 still used Node 20 (deprecated on runners).
       - name: Publish to gh-pages branch
-        uses: JamesIves/github-pages-deploy-action@v4.8.0
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          folder: dist
-          branch: gh-pages
-          single-commit: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true
