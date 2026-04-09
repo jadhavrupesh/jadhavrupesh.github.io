@@ -1,26 +1,25 @@
-# Publishes ./dist (Vite build). GitHub repo Settings → Pages → Build and deployment
-# must use "GitHub Actions", NOT "Deploy from a branch". Branch deploy serves raw
-# index.html (points at /index.tsx) and the app will not load.
+# Builds Vite to ./dist and pushes that folder to the `gh-pages` branch.
 #
-# Actions pinned to majors that run on Node.js 24 (see GitHub changelog on Node 20 deprecation).
+# GitHub: Settings → Pages → Build and deployment → Source: "Deploy from a branch"
+# Branch: gh-pages  ·  Folder: / (root)
+#
+# Do NOT publish the repo root (main) — that serves index.html with /index.tsx and breaks in the browser.
 name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,7 +29,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -38,23 +37,9 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v6
-
-      # v4 excludes dotfiles by default; include-hidden-files keeps public/.nojekyll in dist.
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+      - name: Publish to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: './dist'
-          include-hidden-files: true
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true
