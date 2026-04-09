@@ -37,9 +37,10 @@ jobs:
       - name: Build
         run: npm run build
 
+      # JamesIves v4.8+ runs on Node 24; peaceiris/actions-gh-pages@v4 still used Node 20 (deprecated on runners).
       - name: Publish to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          force_orphan: true
+          folder: dist
+          branch: gh-pages
+          single-commit: true
