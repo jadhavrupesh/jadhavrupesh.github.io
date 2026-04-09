@@ -1,6 +1,8 @@
 # Publishes ./dist (Vite build). GitHub repo Settings → Pages → Build and deployment
 # must use "GitHub Actions", NOT "Deploy from a branch". Branch deploy serves raw
 # index.html (points at /index.tsx) and the app will not load.
+#
+# Actions pinned to majors that run on Node.js 24 (see GitHub changelog on Node 20 deprecation).
 name: Deploy to GitHub Pages
 
 on:
@@ -22,12 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
@@ -37,12 +39,14 @@ jobs:
         run: npm run build
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v6
 
+      # v4 excludes dotfiles by default; include-hidden-files keeps public/.nojekyll in dist.
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: './dist'
+          include-hidden-files: true
 
   deploy:
     environment:
@@ -53,4 +57,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
