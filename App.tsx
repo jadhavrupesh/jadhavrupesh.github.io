@@ -2,15 +2,21 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './components/ThemeContext';
 import Navigation from './components/Navigation';
+import { EtherealShadow } from '@/components/ui/etheral-shadow';
 import HomePage from './pages/HomePage';
 import ExperiencePage from './pages/ExperiencePage';
 import SkillsPage from './pages/SkillsPage';
 import MusicPage from './pages/MusicPage';
 import ContactPage from './pages/ContactPage';
-import { Sun, Moon, Ghost, Spline, Snowflake } from 'lucide-react';
+
+const ETHEREAL = {
+    waveColor: 'rgba(255, 255, 255, 0.48)',
+    noise: { opacity: 1, scale: 1.28 },
+    animation: { scale: 94, speed: 60 },
+};
 
 const CustomCursor: React.FC = () => {
-    const { palette, theme } = useTheme();
+    const { palette } = useTheme();
     const [position, setPosition] = React.useState({ x: 0, y: 0 });
     const [isPointer, setIsPointer] = React.useState(false);
     const [isText, setIsText] = React.useState(false);
@@ -35,7 +41,9 @@ const CustomCursor: React.FC = () => {
                 const isPointerTarget = !!target.closest('a, button');
                 setIsPointer(isPointerTarget);
                 const computedStyle = window.getComputedStyle(target);
-                const isTextElement = computedStyle.cursor === 'text' || target.tagName.match(/^(P|H[1-6]|SPAN|LI|BLOCKQUOTE)$/i);
+                const isTextElement =
+                    computedStyle.cursor === 'text' ||
+                    !!target.tagName.match(/^(P|H[1-6]|SPAN|LI|BLOCKQUOTE)$/i);
                 const noTextCursor = !!target.closest('[data-no-text-cursor="true"]');
                 setIsText(isTextElement && !isPointerTarget && !noTextCursor);
             }
@@ -61,12 +69,13 @@ const CustomCursor: React.FC = () => {
         pointerEvents: 'none',
         transform: 'translate(-50%, -50%)',
         zIndex: 9999,
-        transition: 'width 0.2s ease, height 0.2s ease, border-radius 0.2s ease, background-color 0.2s ease, border 0.2s ease, color 0.2s ease',
+        transition:
+            'width 0.2s ease, height 0.2s ease, border-radius 0.2s ease, background-color 0.2s ease, border 0.2s ease, color 0.2s ease',
         opacity: isHidden ? 0 : 1,
     };
 
     const accent = palette.accent;
-    const caretColor = theme === 'stealth' ? palette.textStrong || palette.text : accent;
+    const caretColor = accent;
     const navBorderColor = palette.textMuted || palette.text;
 
     if (isNavHover) {
@@ -104,61 +113,11 @@ const CustomCursor: React.FC = () => {
                 ...styles,
                 width: `${cursorSize}px`,
                 height: `${cursorSize}px`,
-                backgroundColor: isPointer ? `${accent}CC` : accent, // CC ~ 80% alpha
+                backgroundColor: isPointer ? `${accent}CC` : accent,
                 borderRadius: '50%',
                 border: isPointer ? `2px solid ${accent}` : 'none',
             }}
         />
-    );
-};
-
-const ThemeToggleButton: React.FC = () => {
-    const { theme, toggleTheme } = useTheme();
-
-    const baseClasses = 'fixed bottom-8 right-8 p-3 rounded-full z-50 transition-colors border';
-
-    const getButtonClasses = () => {
-        switch (theme) {
-            case 'light':
-                return `${baseClasses} bg-white/70 border-gray-400 text-gray-900 hover:bg-white`;
-            case 'dark':
-                return `${baseClasses} bg-gray-800/70 border-gray-700 text-white hover:bg-gray-800`;
-            case 'stealth':
-                return `${baseClasses} bg-[#121212]/70 border-[#383E42] text-[#A7B0B6] hover:bg-[#121212]`;
-            case 'light-trail':
-                return `${baseClasses} bg-[#E0E0E0]/70 border-[#4F4F4F]/50 text-[#1F1F1F] hover:bg-[#E0E0E0]`;
-            case 'nord-light':
-                return `${baseClasses} bg-[#E5E9F0]/70 border-[#D8DEE9] text-[#2E3440] hover:bg-[#E5E9F0]`;
-            default:
-                return baseClasses;
-        }
-    };
-
-    const getIcon = () => {
-        switch (theme) {
-            case 'light':
-                return <Sun size={20} />;
-            case 'dark':
-                return <Moon size={20} />;
-            case 'stealth':
-                return <Ghost size={20} />;
-            case 'light-trail':
-                return <Spline size={20} />;
-            case 'nord-light':
-                return <Snowflake size={20} />;
-            default:
-                return <Sun size={20} />;
-        }
-    };
-
-    return (
-        <button
-            onClick={toggleTheme}
-            className={getButtonClasses()}
-            aria-label="Toggle theme"
-        >
-            {getIcon()}
-        </button>
     );
 };
 
@@ -173,38 +132,46 @@ const App: React.FC = () => {
     );
 };
 
-const AppContentWrapper: React.FC = () => {
-    const { theme, palette } = useTheme();
+const SCRIM_LAYERS = `
+    radial-gradient(ellipse 95% 65% at 50% 18%, rgba(255,255,255,0.07) 0%, transparent 52%),
+    radial-gradient(ellipse 70% 55% at 85% 75%, rgba(255,255,255,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 12% 60%, rgba(255,255,255,0.03) 0%, transparent 48%),
+    linear-gradient(168deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.72) 48%, rgba(0,0,0,0.88) 100%)
+`;
 
-    const getBackgroundColor = () => {
-        switch (theme) {
-            case 'stealth':
-                return 'bg-[#010203]';
-            case 'dark':
-                return 'bg-[#0a0a0a]';
-            case 'light-trail':
-                return 'bg-[#F2F2F2]';
-            case 'nord-light':
-                return 'bg-[#ECEFF4]';
-            case 'light':
-            default:
-                return 'bg-gray-50';
-        }
-    };
+const AppContentWrapper: React.FC = () => {
+    const { palette } = useTheme();
 
     return (
-        <div className={`${getBackgroundColor()} min-h-screen`} style={(theme === 'stealth' || theme === 'light-trail' || theme === 'nord-light') ? { color: palette.text } : undefined}>
+        <div className="relative min-h-screen min-h-[100dvh] overflow-x-hidden">
+            <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden>
+                <EtherealShadow
+                    className="min-h-[100dvh] w-full"
+                    color={ETHEREAL.waveColor}
+                    animation={ETHEREAL.animation}
+                    noise={ETHEREAL.noise}
+                    sizing="fill"
+                />
+            </div>
+            <div
+                className="fixed inset-0 z-[1] pointer-events-none"
+                style={{ background: SCRIM_LAYERS }}
+                aria-hidden
+            />
+            <div className="relative z-10 min-h-screen" style={{ color: palette.text }}>
+                <div className="min-h-screen backdrop-blur-md supports-[backdrop-filter]:backdrop-blur-lg bg-black/[0.14] shadow-[inset_0_0_100px_rgba(0,0,0,0.55)] ring-1 ring-inset ring-white/[0.06]">
+                    <main className="max-w-3xl mx-auto px-6 sm:px-8 pb-28 md:pb-32 relative">
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/contact" element={<ContactPage />} />
+                            <Route path="/experience" element={<ExperiencePage />} />
+                            <Route path="/skills" element={<SkillsPage />} />
+                            <Route path="/music" element={<MusicPage />} />
+                        </Routes>
+                    </main>
+                </div>
+            </div>
             <Navigation />
-            <main className="max-w-3xl mx-auto px-6 sm:px-8 pb-24 relative">
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/experience" element={<ExperiencePage />} />
-                    <Route path="/skills" element={<SkillsPage />} />
-                    <Route path="/music" element={<MusicPage />} />
-                </Routes>
-            </main>
-            <ThemeToggleButton />
         </div>
     );
 };
