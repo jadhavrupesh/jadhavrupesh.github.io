@@ -2,18 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './components/ThemeContext';
 import Navigation from './components/Navigation';
-import { EtherealShadow } from '@/components/ui/etheral-shadow';
+import { SilkBackgroundAnimation } from '@/components/ui/silk-background-animation';
 import HomePage from './pages/HomePage';
 import ExperiencePage from './pages/ExperiencePage';
 import SkillsPage from './pages/SkillsPage';
 import MusicPage from './pages/MusicPage';
 import ContactPage from './pages/ContactPage';
-
-const ETHEREAL = {
-    waveColor: 'rgba(255, 255, 255, 0.48)',
-    noise: { opacity: 1, scale: 1.28 },
-    animation: { scale: 94, speed: 60 },
-};
 
 const CustomCursor: React.FC = () => {
     const { palette } = useTheme();
@@ -145,13 +139,7 @@ const AppContentWrapper: React.FC = () => {
     return (
         <div className="relative min-h-screen min-h-[100dvh] overflow-x-hidden">
             <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden>
-                <EtherealShadow
-                    className="min-h-[100dvh] w-full"
-                    color={ETHEREAL.waveColor}
-                    animation={ETHEREAL.animation}
-                    noise={ETHEREAL.noise}
-                    sizing="fill"
-                />
+                <SilkBackgroundAnimation className="h-full w-full" />
             </div>
             <div
                 className="fixed inset-0 z-[1] pointer-events-none"

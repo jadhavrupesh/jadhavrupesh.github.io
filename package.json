@@ -10,12 +10,14 @@
     "deploy": "git add . && git commit -m 'Deploy updates' && git push origin main"
   },
   "dependencies": {
+    "@react-three/fiber": "^9.5.0",
     "@types/react-router-dom": "^5.3.3",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.14.0"
+    "react-router-dom": "^7.14.0",
+    "three": "^0.183.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.2",
