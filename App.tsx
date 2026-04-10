@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './components/ThemeContext';
 import Navigation from './components/Navigation';
-import { SilkBackgroundAnimation } from '@/components/ui/silk-background-animation';
+import { WebGLShader } from '@/components/ui/web-gl-shader';
 import HomePage from './pages/HomePage';
 import ExperiencePage from './pages/ExperiencePage';
 import SkillsPage from './pages/SkillsPage';
@@ -127,10 +127,8 @@ const App: React.FC = () => {
 };
 
 const SCRIM_LAYERS = `
-    radial-gradient(ellipse 95% 65% at 50% 18%, rgba(255,255,255,0.07) 0%, transparent 52%),
-    radial-gradient(ellipse 70% 55% at 85% 75%, rgba(255,255,255,0.04) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 50% at 12% 60%, rgba(255,255,255,0.03) 0%, transparent 48%),
-    linear-gradient(168deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.72) 48%, rgba(0,0,0,0.88) 100%)
+    radial-gradient(ellipse 95% 65% at 50% 18%, rgba(255,255,255,0.03) 0%, transparent 52%),
+    linear-gradient(168deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.38) 100%)
 `;
 
 const AppContentWrapper: React.FC = () => {
@@ -139,7 +137,7 @@ const AppContentWrapper: React.FC = () => {
     return (
         <div className="relative min-h-screen min-h-[100dvh] overflow-x-hidden">
             <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden>
-                <SilkBackgroundAnimation className="h-full w-full" />
+                <WebGLShader />
             </div>
             <div
                 className="fixed inset-0 z-[1] pointer-events-none"
