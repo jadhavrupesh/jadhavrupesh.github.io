@@ -1,53 +1,98 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Home, Briefcase, Wrench, Music, Mail } from 'lucide-react';
+
+const navItems = [
+    { name: 'Home',    path: '/',           Icon: Home },
+    { name: 'Work',    path: '/experience', Icon: Briefcase },
+    { name: 'Tools',   path: '/skills',     Icon: Wrench },
+    { name: 'Music',   path: '/music',      Icon: Music },
+    { name: 'Contact', path: '/contact',    Icon: Mail },
+];
 
 const Navigation: React.FC = () => {
     const location = useLocation();
 
-    const navItems = [
-        { name: 'Home', path: '/' },
-        { name: 'Work', path: '/experience' },
-        { name: 'Tools', path: '/skills' },
-        { name: 'Music', path: '/music' },
-        { name: 'Contact', path: '/contact' },
-    ];
-
-    const navBg = 'bg-black/90 border-gray-800/50';
-
-    const linkClasses = (isActive: boolean) => {
-        const base =
-            'text-xs md:text-sm font-medium transition-all duration-300 px-2 md:px-4 py-1 md:py-2 rounded-lg relative group min-w-[60px] md:min-w-[80px] text-center';
-        return `${base} ${isActive ? 'text-red-400 bg-gray-800/50' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`;
-    };
-
     return (
-        <nav className="fixed bottom-4 md:bottom-8 left-1/2 z-[100]">
-            <div
-                className={`relative backdrop-blur-md border rounded-full px-3 md:px-6 py-2 md:py-3 transform -translate-x-1/2 ${navBg}`}
-            >
-                <div className="flex items-center gap-3 md:gap-8 whitespace-nowrap">
-                    {navItems.map((item) => {
-                        const isActive = location.pathname === item.path;
-                        return (
-                            <Link
-                                key={item.name}
-                                to={item.path}
-                                data-nav-link="true"
-                                className={linkClasses(isActive)}
-                            >
-                                <span className="relative z-10">{item.name}</span>
-                                {isActive && (
-                                    <div
-                                        className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-px h-2 rounded-full bg-red-400"
-                                        style={{ top: '-0.75rem' }}
+        <>
+            {/* Shared glass SVG filter */}
+            <svg className="hidden" aria-hidden>
+                <defs>
+                    <filter
+                        id="nav-glass"
+                        x="0%" y="0%" width="100%" height="100%"
+                        colorInterpolationFilters="sRGB"
+                    >
+                        <feTurbulence type="fractalNoise" baseFrequency="0.04 0.04" numOctaves="1" seed="2" result="turbulence" />
+                        <feGaussianBlur in="turbulence" stdDeviation="1.5" result="blurredNoise" />
+                        <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="40" xChannelSelector="R" yChannelSelector="B" result="displaced" />
+                        <feGaussianBlur in="displaced" stdDeviation="2" result="finalBlur" />
+                        <feComposite in="finalBlur" in2="finalBlur" operator="over" />
+                    </filter>
+                </defs>
+            </svg>
+
+            <nav className="fixed bottom-5 md:bottom-8 left-1/2 -translate-x-1/2 z-[100]">
+                {/* Outer glass container */}
+                <div className="relative rounded-full p-[1px]"
+                    style={{
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.10) 100%)',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)',
+                    }}
+                >
+                    {/* Glass distortion layer */}
+                    <div
+                        className="absolute inset-0 rounded-full -z-10"
+                        style={{ backdropFilter: 'url("#nav-glass") blur(12px)' }}
+                    />
+                    {/* Dark fill */}
+                    <div className="absolute inset-0 rounded-full bg-black/60 -z-10" />
+
+                    <div className="flex items-center gap-1 px-3 py-2">
+                        {navItems.map(({ name, path, Icon }) => {
+                            const isActive = location.pathname === path;
+                            return (
+                                <Link
+                                    key={name}
+                                    to={path}
+                                    data-nav-link="true"
+                                    className="relative flex flex-col items-center gap-0.5 px-3 md:px-4 py-2 rounded-full group transition-all duration-300"
+                                    style={{
+                                        background: isActive
+                                            ? 'rgba(255,255,255,0.10)'
+                                            : 'transparent',
+                                        boxShadow: isActive
+                                            ? 'inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 3px rgba(0,0,0,0.2)'
+                                            : 'none',
+                                    }}
+                                >
+                                    {/* Active glow dot above */}
+                                    {isActive && (
+                                        <span className="absolute -top-[5px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white shadow-[0_0_6px_2px_rgba(255,255,255,0.6)]" />
+                                    )}
+
+                                    <Icon
+                                        size={16}
+                                        strokeWidth={isActive ? 2 : 1.5}
+                                        className="transition-all duration-300"
+                                        style={{
+                                            color: isActive ? '#fff' : 'rgba(255,255,255,0.45)',
+                                            filter: isActive ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' : 'none',
+                                        }}
                                     />
-                                )}
-                            </Link>
-                        );
-                    })}
+                                    <span
+                                        className="text-[10px] font-medium tracking-wide transition-all duration-300 leading-none"
+                                        style={{ color: isActive ? '#fff' : 'rgba(255,255,255,0.4)' }}
+                                    >
+                                        {name}
+                                    </span>
+                                </Link>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        </>
     );
 };
 

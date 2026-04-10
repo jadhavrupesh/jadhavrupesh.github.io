@@ -8,13 +8,7 @@ export function WebGLShader() {
     camera: THREE.OrthographicCamera | null
     renderer: THREE.WebGLRenderer | null
     mesh: THREE.Mesh | null
-    uniforms: {
-      resolution: { value: number[] }
-      time: { value: number }
-      xScale: { value: number }
-      yScale: { value: number }
-      distortion: { value: number }
-    } | null
+    uniforms: any
     animationId: number | null
   }>({
     scene: null,
@@ -63,52 +57,47 @@ export function WebGLShader() {
       }
     `
 
-    refs.scene = new THREE.Scene()
-    refs.renderer = new THREE.WebGLRenderer({ canvas })
-    refs.renderer.setPixelRatio(window.devicePixelRatio)
-    refs.renderer.setClearColor(new THREE.Color(0x000000))
+    const initScene = () => {
+      refs.scene = new THREE.Scene()
+      refs.renderer = new THREE.WebGLRenderer({ canvas })
+      refs.renderer.setPixelRatio(window.devicePixelRatio)
+      refs.renderer.setClearColor(new THREE.Color(0x000000))
 
-    refs.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1)
+      refs.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1)
 
-    refs.uniforms = {
-      resolution: { value: [window.innerWidth, window.innerHeight] },
-      time: { value: 0.0 },
-      xScale: { value: 1.0 },
-      yScale: { value: 0.5 },
-      distortion: { value: 0.05 },
-    }
+      refs.uniforms = {
+        resolution: { value: [window.innerWidth, window.innerHeight] },
+        time: { value: 0.0 },
+        xScale: { value: 1.0 },
+        yScale: { value: 0.5 },
+        distortion: { value: 0.05 },
+      }
 
-    const positions = new THREE.BufferAttribute(
-      new Float32Array([
+      const position = [
         -1.0, -1.0, 0.0,
          1.0, -1.0, 0.0,
         -1.0,  1.0, 0.0,
          1.0, -1.0, 0.0,
         -1.0,  1.0, 0.0,
          1.0,  1.0, 0.0,
-      ]),
-      3
-    )
-    const geometry = new THREE.BufferGeometry()
-    geometry.setAttribute("position", positions)
+      ]
 
-    const material = new THREE.RawShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: refs.uniforms,
-      side: THREE.DoubleSide,
-    })
+      const positions = new THREE.BufferAttribute(new Float32Array(position), 3)
+      const geometry = new THREE.BufferGeometry()
+      geometry.setAttribute("position", positions)
 
-    refs.mesh = new THREE.Mesh(geometry, material)
-    refs.scene.add(refs.mesh)
+      const material = new THREE.RawShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: refs.uniforms,
+        side: THREE.DoubleSide,
+      })
 
-    const handleResize = () => {
-      if (!refs.renderer || !refs.uniforms) return
-      refs.renderer.setSize(window.innerWidth, window.innerHeight, false)
-      refs.uniforms.resolution.value = [window.innerWidth, window.innerHeight]
+      refs.mesh = new THREE.Mesh(geometry, material)
+      refs.scene.add(refs.mesh)
+
+      handleResize()
     }
-
-    handleResize()
 
     const animate = () => {
       if (refs.uniforms) refs.uniforms.time.value += 0.01
@@ -117,8 +106,17 @@ export function WebGLShader() {
       }
       refs.animationId = requestAnimationFrame(animate)
     }
-    animate()
 
+    const handleResize = () => {
+      if (!refs.renderer || !refs.uniforms) return
+      const width = window.innerWidth
+      const height = window.innerHeight
+      refs.renderer.setSize(width, height, false)
+      refs.uniforms.resolution.value = [width, height]
+    }
+
+    initScene()
+    animate()
     window.addEventListener("resize", handleResize)
 
     return () => {

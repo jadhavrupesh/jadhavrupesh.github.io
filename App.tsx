@@ -127,8 +127,7 @@ const App: React.FC = () => {
 };
 
 const SCRIM_LAYERS = `
-    radial-gradient(ellipse 95% 65% at 50% 18%, rgba(255,255,255,0.03) 0%, transparent 52%),
-    linear-gradient(168deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.38) 100%)
+    linear-gradient(168deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.12) 100%)
 `;
 
 const AppContentWrapper: React.FC = () => {
@@ -145,7 +144,7 @@ const AppContentWrapper: React.FC = () => {
                 aria-hidden
             />
             <div className="relative z-10 min-h-screen" style={{ color: palette.text }}>
-                <div className="min-h-screen backdrop-blur-md supports-[backdrop-filter]:backdrop-blur-lg bg-black/[0.14] shadow-[inset_0_0_100px_rgba(0,0,0,0.55)] ring-1 ring-inset ring-white/[0.06]">
+                <div className="min-h-screen backdrop-blur-[2px] bg-black/[0.04] ring-1 ring-inset ring-white/[0.04]">
                     <main className="max-w-3xl mx-auto px-6 sm:px-8 pb-28 md:pb-32 relative">
                         <Routes>
                             <Route path="/" element={<HomePage />} />

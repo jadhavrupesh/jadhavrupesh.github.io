@@ -1,67 +1,120 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { Mail, Phone, Linkedin, Github, MapPin, ExternalLink } from 'lucide-react';
 import { personalInfo } from '../constants';
 
+const GLASS_CARD =
+    'group rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.05] to-transparent shadow-[0_24px_60px_-28px_rgba(0,0,0,0.85)] backdrop-blur-md transition-all duration-300 hover:border-white/[0.16] hover:from-white/[0.08]';
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 20 },
+    show: (i: number) => ({
+        opacity: 1,
+        y: 0,
+        transition: { delay: i * 0.08, type: 'spring' as const, stiffness: 320, damping: 28 },
+    }),
+};
+
+type ContactItem = {
+    icon: React.ReactNode;
+    label: string;
+    value: string;
+    href: string;
+    external?: boolean;
+};
+
+const contacts: ContactItem[] = [
+    {
+        icon: <Mail size={18} strokeWidth={1.5} />,
+        label: 'Email',
+        value: personalInfo.email,
+        href: `mailto:${personalInfo.email}`,
+    },
+    {
+        icon: <Phone size={18} strokeWidth={1.5} />,
+        label: 'Phone',
+        value: personalInfo.phone,
+        href: `tel:${personalInfo.phone}`,
+    },
+    {
+        icon: <Linkedin size={18} strokeWidth={1.5} />,
+        label: 'LinkedIn',
+        value: 'rupesh-jadhav-126624100',
+        href: personalInfo.linkedin,
+        external: true,
+    },
+    {
+        icon: <Github size={18} strokeWidth={1.5} />,
+        label: 'GitHub',
+        value: 'github.com/jadhavrupesh',
+        href: personalInfo.github,
+        external: true,
+    },
+    {
+        icon: <MapPin size={18} strokeWidth={1.5} />,
+        label: 'Location',
+        value: personalInfo.location,
+        href: 'https://maps.google.com/?q=Mumbai,India',
+        external: true,
+    },
+];
+
 const ContactPage: React.FC = () => {
-    const linkClass = 'underline text-neutral-200 hover:text-white';
-
     return (
-        <div className="flex flex-col justify-center items-center max-w-lg mx-auto px-6 min-h-screen py-12">
-            <div className="text-left mb-8 w-full">
-                <h1 className="text-xl font-medium text-white mb-1">Contact</h1>
-                <p className="text-gray-400 text-sm">Get in touch with me</p>
-            </div>
+        <div className="flex flex-col max-w-lg mx-auto px-4 sm:px-6 py-16 md:py-20 gap-6">
 
-            <div className="text-left w-full space-y-6">
-                <div>
-                    <p className="text-gray-300 leading-relaxed mb-3">Contact Details:</p>
-                    <ul className="text-gray-300 space-y-1 text-sm">
-                        <li>
-                            • Email:{' '}
-                            <a href={`mailto:${personalInfo.email}`} className={linkClass}>
-                                {personalInfo.email}
-                            </a>
-                        </li>
-                        <li>
-                            • Phone:{' '}
-                            <a href={`tel:${personalInfo.phone}`} className={linkClass}>
-                                {personalInfo.phone}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+            {/* Header */}
+            <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate="show"
+                custom={0}
+            >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500 mb-2">
+                    Contact
+                </p>
+                <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
+                    Get in touch
+                </h1>
+                <div className="mt-4 h-px max-w-xs bg-gradient-to-r from-white/25 via-white/10 to-transparent" />
+            </motion.div>
 
-                <div>
-                    <p className="text-gray-300 leading-relaxed mb-3">Find me online:</p>
-                    <ul className="text-gray-300 space-y-1 text-sm">
-                        <li>
-                            • LinkedIn:{' '}
-                            <a
-                                href={personalInfo.linkedin}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={linkClass}
-                            >
-                                linkedin.com/in/rupesh-jadhav-126624100
-                            </a>
-                        </li>
-                        <li>
-                            • GitHub:{' '}
-                            <a
-                                href={personalInfo.github}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={linkClass}
-                            >
-                                github.com/jadhavrupesh
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+            {/* Contact cards */}
+            <div className="flex flex-col gap-3">
+                {contacts.map((item, i) => (
+                    <motion.a
+                        key={item.label}
+                        href={item.href}
+                        target={item.external ? '_blank' : undefined}
+                        rel={item.external ? 'noopener noreferrer' : undefined}
+                        className={`${GLASS_CARD} flex items-center gap-4 p-4 md:p-5`}
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="show"
+                        custom={i + 1}
+                    >
+                        {/* Icon box */}
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-neutral-300 transition-colors duration-300 group-hover:border-white/[0.14] group-hover:text-white">
+                            {item.icon}
+                        </span>
 
-                <div>
-                    <p className="text-gray-300 leading-relaxed mb-3">Location:</p>
-                    <p className="text-gray-400 text-sm">{personalInfo.location}</p>
-                </div>
+                        <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500 mb-0.5">
+                                {item.label}
+                            </p>
+                            <p className="truncate text-sm font-medium text-neutral-200 group-hover:text-white transition-colors duration-300">
+                                {item.value}
+                            </p>
+                        </div>
+
+                        {item.external && (
+                            <ExternalLink
+                                size={14}
+                                className="shrink-0 text-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
+                            />
+                        )}
+                    </motion.a>
+                ))}
             </div>
         </div>
     );
