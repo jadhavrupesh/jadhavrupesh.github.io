@@ -1,7 +1,10 @@
 import React from 'react';
 import { personalInfo } from '../constants';
+import { LiquidButton } from '@/components/ui/liquid-glass-button';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <div className="flex flex-col justify-center items-center max-w-2xl mx-auto px-6 min-h-screen py-12">
             <div className="flex items-center mb-8 max-w-lg w-full">
@@ -54,6 +57,16 @@ const HomePage: React.FC = () => {
                     prioritizing performance and security. I actively explore new technologies like Compose
                     Multiplatform to stay ahead in the fast-moving mobile ecosystem.
                 </p>
+
+                <div className="flex justify-center pt-4">
+                    <LiquidButton
+                        className="text-white border border-white/20 rounded-full"
+                        size="xl"
+                        onClick={() => navigate('/contact')}
+                    >
+                        Let's Connect
+                    </LiquidButton>
+                </div>
             </div>
         </div>
     );
