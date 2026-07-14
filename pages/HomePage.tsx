@@ -1,176 +1,222 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { MapPin, Briefcase, ExternalLink } from 'lucide-react';
-import { personalInfo, professionalSummary } from '../constants';
-import { LiquidButton } from '@/components/ui/liquid-glass-button';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Mail, Github, Linkedin, MapPin, ExternalLink } from 'lucide-react';
+import { personalInfo, professionalSummary, skillData, experienceData } from '../constants';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { RetroFlower } from '@/components/retro/RetroFlower';
+import { AsciiTextLoader } from '@/components/retro/AsciiTextLoader';
+import { SectionHeading, StatusIndicator, TerminalPanel } from '@/components/retro/RetroComponents';
 
-const GLASS_CARD =
-    'rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.05] to-transparent shadow-[0_24px_60px_-28px_rgba(0,0,0,0.85)] backdrop-blur-md';
-
-const fadeUp = {
-    hidden: { opacity: 0, y: 20 },
-    show: (i: number) => ({
-        opacity: 1,
-        y: 0,
-        transition: { delay: i * 0.1, type: 'spring' as const, stiffness: 320, damping: 28 },
-    }),
-};
-
-const techStack = [
-    'Android', 'Flutter', 'Kotlin', 'Dart', 'KMP', 'Clean Architecture',
-];
+const stack = ['Flutter', 'Android', 'Kotlin', 'Dart', 'KMP', 'Clean Architecture'];
 
 const HomePage: React.FC = () => {
-    const navigate = useNavigate();
-
     return (
-        <div className="flex flex-col gap-6 max-w-2xl mx-auto px-4 sm:px-6 py-16 md:py-20">
-
-            {/* ── Profile hero ── */}
-            <motion.div
-                className={`${GLASS_CARD} p-6 md:p-8`}
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                custom={0}
-            >
-                <div className="flex items-start gap-5">
-                    {/* Avatar with glow ring */}
-                    <div className="relative shrink-0">
-                        <div className="absolute -inset-[3px] rounded-full bg-gradient-to-br from-white/30 via-white/10 to-transparent" />
-                        <img
-                            src="./profile.jpg"
-                            alt="Rupesh Jadhav"
-                            className="relative h-16 w-16 rounded-full object-cover ring-1 ring-white/10"
-                        />
+        <div className="motion-page space-y-8">
+            {/* ── Hero Section ── */}
+            <section className="grid gap-6 lg:grid-cols-[1fr_280px] items-start">
+                {/* Left: Player Info */}
+                <div className="space-y-6">
+                    {/* Boot Status */}
+                    <div className="text-[10px] text-[var(--fg-muted)] space-y-0.5">
+                        <div>&gt; SYSTEM READY</div>
+                        <div>&gt; LOADING PLAYER PROFILE...</div>
+                        <div className="text-[var(--fg-secondary)]">&gt; PROFILE LOADED SUCCESSFULLY</div>
                     </div>
 
-                    <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <h1 className="text-xl font-bold text-white tracking-tight">
-                                {personalInfo.name}
-                            </h1>
-                            {/* Available badge */}
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-green-400">
-                                <span className="relative flex h-1.5 w-1.5">
-                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
-                                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
-                                </span>
-                                Available
-                            </span>
-                        </div>
+                    {/* Name & Role */}
+                    <div>
+                        <h1 className="font-pixel text-lg sm:text-xl md:text-2xl uppercase tracking-[0.03em] text-[var(--fg-primary)] leading-tight">
+                            <AsciiTextLoader text="Rupesh Jadhav" delay={120} speed={55} />
+                        </h1>
+                        <p className="mt-2 text-sm uppercase tracking-[0.1em] text-[var(--fg-secondary)]">
+                            <AsciiTextLoader text="Senior Mobile Developer" delay={240} speed={45} />
+                        </p>
+                    </div>
 
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-neutral-400">
-                            <span className="flex items-center gap-1">
-                                <Briefcase size={11} className="text-neutral-500" />
-                                Senior Mobile Developer
-                            </span>
-                            <span className="flex items-center gap-1">
-                                <MapPin size={11} className="text-neutral-500" />
-                                {personalInfo.location}
-                            </span>
-                        </div>
+                    {/* Summary */}
+                    <p className="text-xs leading-relaxed text-[var(--fg-secondary)] max-w-xl">
+                        <AsciiTextLoader text={professionalSummary} delay={380} speed={18} />
+                    </p>
 
+                    {/* Status & Location */}
+                    <div className="flex flex-wrap gap-4">
+                        <StatusIndicator active label="AVAILABLE FOR WORK" />
+                        <span className="inline-flex items-center gap-1 text-[10px] text-[var(--fg-muted)] uppercase tracking-[0.1em]">
+                            <MapPin className="h-3 w-3" />
+                            {personalInfo.location}
+                        </span>
+                    </div>
+
+                    {/* CTAs */}
+                    <div className="flex flex-wrap gap-3">
+                        <Button asChild variant="retro">
+                            <Link to="/experience">[ VIEW WORK ]</Link>
+                        </Button>
+                        <Button asChild variant="outline">
+                            <Link to="/game">[ GAME ]</Link>
+                        </Button>
+                        <Button asChild variant="outline">
+                            <Link to="/contact">
+                                <Mail className="h-3 w-3" />
+                                [ CONTACT ]
+                            </Link>
+                        </Button>
+                    </div>
+
+                    {/* Social */}
+                    <div className="flex gap-3">
                         <a
-                            href="https://instagram.com/wtfrupesh"
+                            href={personalInfo.github}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-2 inline-flex items-center gap-1 text-[11px] text-neutral-500 hover:text-neutral-300 transition-colors"
+                            className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-[var(--fg-muted)] hover:text-[var(--fg-primary)] transition-colors"
+                            aria-label="GitHub Profile"
                         >
-                            @wtfrupesh
-                            <ExternalLink size={10} />
+                            <Github className="h-3.5 w-3.5" />
+                            GITHUB
+                            <ExternalLink className="h-2.5 w-2.5" />
+                        </a>
+                        <a
+                            href={personalInfo.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-[var(--fg-muted)] hover:text-[var(--fg-primary)] transition-colors"
+                            aria-label="LinkedIn Profile"
+                        >
+                            <Linkedin className="h-3.5 w-3.5" />
+                            LINKEDIN
+                            <ExternalLink className="h-2.5 w-2.5" />
                         </a>
                     </div>
                 </div>
-            </motion.div>
 
-            {/* ── Summary ── */}
-            <motion.div
-                className={`${GLASS_CARD} p-6 md:p-7`}
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                custom={1}
-            >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 mb-3">
-                    About
-                </p>
-                <p className="text-sm leading-relaxed text-neutral-300 md:text-[0.9375rem]">
-                    {professionalSummary}
-                </p>
-            </motion.div>
+                {/* Right: ASCII Art + Stats */}
+                <div className="hidden lg:block space-y-4">
+                    <RetroFlower />
 
-            {/* ── Bio bullets ── */}
-            <motion.div
-                className={`${GLASS_CARD} p-6 md:p-7`}
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                custom={2}
-            >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 mb-4">
-                    Expertise
-                </p>
-                <ul className="space-y-3 text-sm text-neutral-300 leading-relaxed md:text-[0.9375rem]">
-                    <li className="flex gap-3">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/40" aria-hidden />
-                        Android (Kotlin, Java), Flutter, and Kotlin Multiplatform (KMP)
-                    </li>
-                    <li className="flex gap-3">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/40" aria-hidden />
-                        Payment gateway integrations (Razorpay), maps and localization
-                    </li>
-                    <li className="flex gap-3">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/40" aria-hidden />
-                        Real-time communication (Agora, WebSockets), secure data storage
-                    </li>
-                    <li className="flex gap-3">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/40" aria-hidden />
-                        CI/CD pipelines with Jenkins and Codemagic, VAPT hardening
-                    </li>
-                </ul>
-            </motion.div>
+                    {/* Player Stats Panel */}
+                    <div className="space-y-1.5 text-[10px] px-2 py-3 border border-[var(--border-default)]" style={{ borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)' }}>
+                        <div className="flex justify-between">
+                            <span className="text-[var(--fg-muted)]">PLAYER:</span>
+                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="RUPESH JADHAV" delay={450} speed={50} /></span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-[var(--fg-muted)]">CLASS:</span>
+                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="SR. MOBILE DEV" delay={520} speed={50} /></span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-[var(--fg-muted)]">SPEC:</span>
+                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="FLUTTER / ANDROID / KMP" delay={590} speed={40} /></span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-[var(--fg-muted)]">EXP:</span>
+                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="5+ YEARS" delay={660} speed={50} /></span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-[var(--fg-muted)]">LOCATION:</span>
+                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="MUMBAI, INDIA" delay={730} speed={50} /></span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-[var(--fg-muted)]">STATUS:</span>
+                            <StatusIndicator active label="ONLINE" />
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            {/* ── Stack chips ── */}
-            <motion.div
-                className={`${GLASS_CARD} p-5 md:p-6`}
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                custom={3}
-            >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 mb-3">
-                    Stack
-                </p>
-                <div className="flex flex-wrap gap-2">
-                    {techStack.map((t) => (
-                        <span
-                            key={t}
-                            className="rounded-full border border-white/[0.09] bg-white/[0.03] px-3 py-1 text-xs font-medium text-neutral-300"
-                        >
-                            {t}
-                        </span>
+            {/* ── Mobile Stats Panel (visible on small screens) ── */}
+            <div className="lg:hidden px-3 py-3 border border-[var(--border-default)]" style={{ borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)' }}>
+                <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                    <div>
+                        <span className="text-[var(--fg-muted)]">CLASS: </span>
+                        <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="SR. MOBILE DEV" delay={450} speed={50} /></span>
+                    </div>
+                    <div>
+                        <span className="text-[var(--fg-muted)]">SPEC: </span>
+                        <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="FLUTTER / KMP" delay={520} speed={50} /></span>
+                    </div>
+                    <div>
+                        <span className="text-[var(--fg-muted)]">EXP: </span>
+                        <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="5+ YEARS" delay={590} speed={50} /></span>
+                    </div>
+                    <div>
+                        <span className="text-[var(--fg-muted)]">STATUS: </span>
+                        <StatusIndicator active label="ONLINE" />
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Experience Preview ── */}
+            <section>
+                <SectionHeading number="01" title="MISSION_LOG" subtitle="Recent deployments" />
+                <div className="motion-stagger space-y-3">
+                    {experienceData.map((item) => (
+                        <Card key={`${item.company}-${item.role}`}>
+                            <CardContent className="p-4">
+                                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                                    <div>
+                                        <h3 className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--fg-primary)]">
+                                            <AsciiTextLoader text={item.role} delay={800} speed={40} />
+                                        </h3>
+                                        <p className="text-[10px] text-[var(--fg-muted)] uppercase tracking-[0.08em] mt-0.5">
+                                            <AsciiTextLoader text={`@ ${item.company}`} delay={870} speed={40} />
+                                        </p>
+                                    </div>
+                                    <Badge>{item.duration}</Badge>
+                                </div>
+                                <p className="mt-2 text-[11px] text-[var(--fg-secondary)] leading-relaxed line-clamp-2">
+                                    <AsciiTextLoader text={item.description[0]} delay={950} speed={18} />
+                                </p>
+                            </CardContent>
+                        </Card>
                     ))}
                 </div>
-            </motion.div>
+                <div className="mt-4 text-center">
+                    <Button asChild variant="ghost" size="sm">
+                        <Link to="/experience">[ VIEW ALL MISSIONS → ]</Link>
+                    </Button>
+                </div>
+            </section>
 
-            {/* ── CTA ── */}
-            <motion.div
-                className="flex justify-center pt-2"
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                custom={4}
-            >
-                <LiquidButton
-                    className="text-white border border-white/20 rounded-full"
-                    size="xl"
-                    onClick={() => navigate('/contact')}
-                >
-                    Let's Connect
-                </LiquidButton>
-            </motion.div>
+            {/* ── Core Stack ── */}
+            <section>
+                <SectionHeading number="02" title="TECH_LOADOUT" subtitle="Primary equipment" />
+                <div className="flex flex-wrap gap-2">
+                    {stack.map((item) => (
+                        <Badge key={item}>{item}</Badge>
+                    ))}
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {skillData.slice(0, 3).map((category) => (
+                        <Card key={category.title}>
+                            <CardContent className="p-3">
+                                <h3 className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--fg-muted)] mb-2">
+                                    {category.title}
+                                </h3>
+                                <div className="flex flex-wrap gap-1">
+                                    {category.skills.slice(0, 5).map((skill) => (
+                                        <span
+                                            key={skill}
+                                            className="text-[10px] text-[var(--fg-secondary)] border border-[var(--border-default)] px-1.5 py-0.5"
+                                            style={{ borderRadius: 'var(--radius-sm)' }}
+                                        >
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+                <div className="mt-4 text-center">
+                    <Button asChild variant="ghost" size="sm">
+                        <Link to="/skills">[ FULL INVENTORY → ]</Link>
+                    </Button>
+                </div>
+            </section>
         </div>
     );
 };

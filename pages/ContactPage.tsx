@@ -1,121 +1,114 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Mail, Phone, Linkedin, Github, MapPin, ExternalLink } from 'lucide-react';
+import { Github, Linkedin, Mail, MapPin, Phone, ExternalLink } from 'lucide-react';
 import { personalInfo } from '../constants';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { SectionHeading } from '@/components/retro/RetroComponents';
+import { AsciiTextLoader } from '@/components/retro/AsciiTextLoader';
 
-const GLASS_CARD =
-    'group rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.05] to-transparent shadow-[0_24px_60px_-28px_rgba(0,0,0,0.85)] backdrop-blur-md transition-all duration-300 hover:border-white/[0.16] hover:from-white/[0.08]';
-
-const fadeUp = {
-    hidden: { opacity: 0, y: 20 },
-    show: (i: number) => ({
-        opacity: 1,
-        y: 0,
-        transition: { delay: i * 0.08, type: 'spring' as const, stiffness: 320, damping: 28 },
-    }),
-};
-
-type ContactItem = {
-    icon: React.ReactNode;
-    label: string;
-    value: string;
-    href: string;
-    external?: boolean;
-};
-
-const contacts: ContactItem[] = [
-    {
-        icon: <Mail size={18} strokeWidth={1.5} />,
-        label: 'Email',
-        value: personalInfo.email,
-        href: `mailto:${personalInfo.email}`,
-    },
-    {
-        icon: <Phone size={18} strokeWidth={1.5} />,
-        label: 'Phone',
-        value: personalInfo.phone,
-        href: `tel:${personalInfo.phone}`,
-    },
-    {
-        icon: <Linkedin size={18} strokeWidth={1.5} />,
-        label: 'LinkedIn',
-        value: 'rupesh-jadhav-126624100',
-        href: personalInfo.linkedin,
-        external: true,
-    },
-    {
-        icon: <Github size={18} strokeWidth={1.5} />,
-        label: 'GitHub',
-        value: 'github.com/jadhavrupesh',
-        href: personalInfo.github,
-        external: true,
-    },
-    {
-        icon: <MapPin size={18} strokeWidth={1.5} />,
-        label: 'Location',
-        value: personalInfo.location,
-        href: 'https://maps.google.com/?q=Mumbai,India',
-        external: true,
-    },
+const contacts = [
+    { icon: Mail, label: 'EMAIL', value: personalInfo.email, href: `mailto:${personalInfo.email}`, external: false },
+    { icon: Phone, label: 'PHONE', value: personalInfo.phone, href: `tel:${personalInfo.phone}`, external: false },
+    { icon: Linkedin, label: 'LINKEDIN', value: 'rupesh-jadhav', href: personalInfo.linkedin, external: true },
+    { icon: Github, label: 'GITHUB', value: 'jadhavrupesh', href: personalInfo.github, external: true },
+    { icon: MapPin, label: 'LOCATION', value: personalInfo.location, href: 'https://maps.google.com/?q=Mumbai,India', external: true },
 ];
 
 const ContactPage: React.FC = () => {
+    const mailtoHref = `mailto:${personalInfo.email}?subject=${encodeURIComponent('Project Inquiry from Portfolio')}&body=${encodeURIComponent('Hi Rupesh,\n\nI visited your portfolio and would like to discuss...\n')}`;
+
     return (
-        <div className="flex flex-col max-w-lg mx-auto px-4 sm:px-6 py-16 md:py-20 gap-6">
-
+        <div className="motion-page space-y-8">
             {/* Header */}
-            <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                custom={0}
-            >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500 mb-2">
-                    Contact
-                </p>
-                <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
-                    Get in touch
+            <header>
+                <div className="text-[10px] text-[var(--fg-muted)] mb-2">&gt; OPENING COMMUNICATION_CHANNEL...</div>
+                <h1 className="font-pixel text-base sm:text-lg uppercase tracking-[0.03em] text-[var(--fg-primary)]">
+                    <AsciiTextLoader text="OPEN_COMMUNICATION_CHANNEL" delay={50} speed={25} />
                 </h1>
-                <div className="mt-4 h-px max-w-xs bg-gradient-to-r from-white/25 via-white/10 to-transparent" />
-            </motion.div>
+                <p className="mt-2 text-xs text-[var(--fg-secondary)] max-w-xl">
+                    <AsciiTextLoader text="Reach out for mobile app work, Flutter/KMP builds, or product engineering roles." delay={100} speed={12} />
+                </p>
+                <div className="mt-3 h-px bg-[var(--border-default)]" />
+            </header>
 
-            {/* Contact cards */}
-            <div className="flex flex-col gap-3">
-                {contacts.map((item, i) => (
-                    <motion.a
-                        key={item.label}
-                        href={item.href}
-                        target={item.external ? '_blank' : undefined}
-                        rel={item.external ? 'noopener noreferrer' : undefined}
-                        className={`${GLASS_CARD} flex items-center gap-4 p-4 md:p-5`}
-                        variants={fadeUp}
-                        initial="hidden"
-                        animate="show"
-                        custom={i + 1}
-                    >
-                        {/* Icon box */}
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-neutral-300 transition-colors duration-300 group-hover:border-white/[0.14] group-hover:text-white">
-                            {item.icon}
-                        </span>
+            {/* Contact Links */}
+            <section>
+                <SectionHeading number="01" title="CONTACT_CHANNELS" subtitle="Available communication endpoints" />
+                <div className="motion-stagger space-y-2 max-w-lg">
+                    {contacts.map(({ icon: Icon, label, value, href, external }, index) => (
+                        <a
+                            key={label}
+                            href={href}
+                            target={external ? '_blank' : undefined}
+                            rel={external ? 'noopener noreferrer' : undefined}
+                            className="flex items-center gap-3 p-3 border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--fg-secondary)] hover:bg-[var(--fg-primary)] hover:text-[var(--fg-inverse)] transition-colors group"
+                            style={{ borderRadius: 'var(--radius-md)' }}
+                        >
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-[var(--border-strong)] group-hover:border-[var(--fg-inverse)]">
+                                <Icon className="h-3.5 w-3.5" />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                                <span className="block text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-muted)] group-hover:text-[var(--fg-inverse)] opacity-70">
+                                    {label}
+                                </span>
+                                <span className="block truncate text-xs font-medium">
+                                    <AsciiTextLoader text={value} delay={200 + index * 100} speed={25} />
+                                </span>
+                            </span>
+                            {external && (
+                                <ExternalLink className="h-3 w-3 shrink-0 text-[var(--fg-muted)] group-hover:text-[var(--fg-inverse)]" />
+                            )}
+                        </a>
+                    ))}
+                </div>
+            </section>
 
-                        <div className="min-w-0 flex-1">
-                            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500 mb-0.5">
-                                {item.label}
-                            </p>
-                            <p className="truncate text-sm font-medium text-neutral-200 group-hover:text-white transition-colors duration-300">
-                                {item.value}
-                            </p>
+            {/* Quick Message */}
+            <section>
+                <SectionHeading number="02" title="SEND_MESSAGE" subtitle="Opens your email client" />
+                <Card className="max-w-lg">
+                    <CardContent className="p-4 space-y-4">
+                        <div className="text-[10px] text-[var(--fg-muted)] space-y-0.5">
+                            <div>&gt; TO: {personalInfo.email}</div>
+                            <div>&gt; SUBJECT: Project Inquiry from Portfolio</div>
+                            <div>&gt; METHOD: mailto: (opens your email client)</div>
                         </div>
 
-                        {item.external && (
-                            <ExternalLink
-                                size={14}
-                                className="shrink-0 text-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
-                            />
-                        )}
-                    </motion.a>
-                ))}
-            </div>
+                        <div className="border-t border-[var(--border-default)] pt-4">
+                            <p className="text-xs text-[var(--fg-secondary)] mb-4">
+                                <AsciiTextLoader text="Clicking below will open your default email client with a pre-filled message. No data is collected or sent through this form." delay={700} speed={10} />
+                            </p>
+                            <Button asChild variant="retro">
+                                <a href={mailtoHref}>
+                                    <Mail className="h-3.5 w-3.5" />
+                                    [ COMPOSE MESSAGE ]
+                                </a>
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            </section>
+
+            {/* Availability */}
+            <section>
+                <Card className="max-w-lg">
+                    <CardContent className="p-4">
+                        <div className="flex items-center gap-2">
+                            <span className="h-2 w-2 rounded-full bg-[var(--fg-primary)] cursor-blink" />
+                            <span className="text-[10px] uppercase tracking-[0.12em] text-[var(--fg-secondary)]">
+                                <AsciiTextLoader text="Currently available for freelance and full-time opportunities" delay={850} speed={15} />
+                            </span>
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                            <Badge>Flutter</Badge>
+                            <Badge>Android</Badge>
+                            <Badge>KMP</Badge>
+                            <Badge>Mobile Architecture</Badge>
+                        </div>
+                    </CardContent>
+                </Card>
+            </section>
         </div>
     );
 };

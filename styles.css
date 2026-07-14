@@ -1,1 +1,439 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Press+Start+2P&display=swap');
 @import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════
+   RUPESH.EXE — Monochrome Retro Design System
+   Inspired by 1990s DOS games, CRT monitors, and arcade machines
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Design Tokens ── */
+:root {
+  /* Background layers */
+  --bg-primary: #0a0a0a;
+  --bg-surface: #111111;
+  --bg-muted: #1a1a1a;
+  --bg-elevated: #222222;
+  --bg-active: #f0f0f0;
+
+  /* Foreground */
+  --fg-primary: #e8e6e3;
+  --fg-secondary: #b0ada8;
+  --fg-muted: #6b6965;
+  --fg-disabled: #3a3a3a;
+  --fg-active: #0a0a0a;
+  --fg-inverse: #0a0a0a;
+
+  /* Borders */
+  --border-default: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.25);
+  --border-active: rgba(255, 255, 255, 0.6);
+  --border-focus: rgba(255, 255, 255, 0.8);
+
+  /* Focus */
+  --ring-focus: rgba(255, 255, 255, 0.5);
+
+  /* Effects */
+  --scanline-opacity: 0.04;
+  --grid-opacity: 0.03;
+  --noise-opacity: 0.02;
+  --shadow-default: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.6);
+
+  /* Selection */
+  --selection-bg: #e8e6e3;
+  --selection-fg: #0a0a0a;
+
+  /* Typography */
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* Spacing (retro grid-based) */
+  --space-unit: 4px;
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+
+  /* Transitions */
+  --duration-fast: 100ms;
+  --duration-normal: 150ms;
+  --duration-slow: 300ms;
+  --ease-retro: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Base Reset ── */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--fg-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, a {
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-fg);
+}
+
+/* ── Skip to Content ── */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--fg-primary);
+  color: var(--fg-inverse);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid var(--fg-primary);
+}
+
+.skip-to-content:focus {
+  top: 8px;
+  outline: 2px solid var(--ring-focus);
+  outline-offset: 2px;
+}
+
+/* ── Pixel Font (used sparingly) ── */
+.font-pixel {
+  font-family: var(--font-pixel);
+  line-height: 1.4;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ── CRT Scanline Overlay ── */
+.crt-scanlines::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, var(--scanline-opacity)) 2px,
+    rgba(0, 0, 0, var(--scanline-opacity)) 4px
+  );
+}
+
+/* ── Subtle Background Grid ── */
+.retro-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, var(--grid-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, var(--grid-opacity)) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ── Noise Texture ── */
+.noise-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  pointer-events: none;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* ── Vignette Effect ── */
+.vignette::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9996;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+}
+
+/* ── Blinking Cursor ── */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.cursor-blink-block::after {
+  content: '█';
+  animation: blink 1s step-end infinite;
+  color: var(--fg-primary);
+}
+
+/* ── Typing Effect ── */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* ── Page Transitions ── */
+@keyframes page-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes item-stagger {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.motion-page {
+  animation: page-reveal 300ms var(--ease-retro) both;
+}
+
+.motion-stagger > * {
+  animation: item-stagger 300ms var(--ease-retro) both;
+}
+
+.motion-stagger > *:nth-child(2) { animation-delay: 50ms; }
+.motion-stagger > *:nth-child(3) { animation-delay: 100ms; }
+.motion-stagger > *:nth-child(4) { animation-delay: 150ms; }
+.motion-stagger > *:nth-child(5) { animation-delay: 200ms; }
+.motion-stagger > *:nth-child(6) { animation-delay: 250ms; }
+.motion-stagger > *:nth-child(7) { animation-delay: 300ms; }
+.motion-stagger > *:nth-child(8) { animation-delay: 350ms; }
+
+/* ── Interactive Transitions ── */
+.retro-hover {
+  transition:
+    background-color var(--duration-fast) ease,
+    color var(--duration-fast) ease,
+    border-color var(--duration-fast) ease;
+}
+
+.retro-hover:hover {
+  background-color: var(--fg-primary);
+  color: var(--fg-inverse);
+}
+
+/* ── Focus States ── */
+*:focus-visible {
+  outline: 2px solid var(--ring-focus);
+  outline-offset: 2px;
+}
+
+/* ── Dither Pattern ── */
+.dither-pattern {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQI12P4////MwMDAwMAEwIF/yJxvyYAAAAASUVORK5CYII=");
+  background-size: 2px 2px;
+  background-repeat: repeat;
+}
+
+/* ── Checkerboard ── */
+.checkerboard {
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.03) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.03) 75%);
+  background-size: 4px 4px;
+  background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+}
+
+/* ── Boot Sequence ── */
+@keyframes boot-text {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.boot-line {
+  animation: boot-text 200ms ease-out both;
+}
+
+.boot-line:nth-child(1) { animation-delay: 0ms; }
+.boot-line:nth-child(2) { animation-delay: 150ms; }
+.boot-line:nth-child(3) { animation-delay: 300ms; }
+.boot-line:nth-child(4) { animation-delay: 450ms; }
+.boot-line:nth-child(5) { animation-delay: 600ms; }
+.boot-line:nth-child(6) { animation-delay: 750ms; }
+.boot-line:nth-child(7) { animation-delay: 900ms; }
+.boot-line:nth-child(8) { animation-delay: 1050ms; }
+
+/* ── ASCII Art Container ── */
+.ascii-art {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.15;
+  letter-spacing: 0;
+  white-space: pre;
+  user-select: none;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .ascii-art {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ascii-art {
+    font-size: 14px;
+  }
+}
+
+/* ── Scrollbar Styling ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-left: 1px solid var(--border-default);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--fg-muted);
+  border: 1px solid var(--border-default);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-secondary);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--fg-muted) var(--bg-primary);
+}
+
+/* ── Status Bar Dot Matrix ── */
+.dot-matrix {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--fg-primary) 0px,
+    var(--fg-primary) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  background-size: 3px 1px;
+  height: 1px;
+  opacity: 0.2;
+}
+
+/* ── Screen Flicker (subtle) ── */
+@keyframes screen-flicker {
+  0%, 99.9% { opacity: 1; }
+  50% { opacity: 0.98; }
+}
+
+.screen-flicker {
+  animation: screen-flicker 4s ease-in-out infinite;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+
+  .crt-scanlines::after,
+  .screen-flicker,
+  .cursor-blink,
+  .retro-flower-animate,
+  .retro-flower-glitch::after {
+    animation: none !important;
+  }
+}
+
+/* ── Retro CRT Flower Animations ── */
+@keyframes retro-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes crt-glitch {
+  0% {
+    clip-path: inset(40% 0 61% 0);
+    transform: skew(0.3deg);
+  }
+  2% {
+    clip-path: inset(92% 0 1% 0);
+    transform: skew(-0.5deg);
+  }
+  4% {
+    clip-path: inset(25% 0 58% 0);
+    transform: skew(0deg);
+  }
+  6% {
+    clip-path: inset(80% 0 5% 0);
+    transform: skew(0.8deg);
+  }
+  8% {
+    clip-path: inset(100% 0 0% 0);
+    transform: skew(0deg);
+  }
+  100% {
+    clip-path: inset(100% 0 0% 0);
+    transform: skew(0deg);
+  }
+}
+
+.retro-flower-animate {
+  animation: retro-float 6s ease-in-out infinite;
+}
+
+.retro-flower-glitch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  opacity: 0.6;
+  mix-blend-mode: color-dodge;
+  animation: crt-glitch 4s linear infinite;
+  pointer-events: none;
+}
+

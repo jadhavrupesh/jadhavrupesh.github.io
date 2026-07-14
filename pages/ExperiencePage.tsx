@@ -1,300 +1,142 @@
-import React from 'react';
-import { motion, useReducedMotion, type Variants } from 'framer-motion';
-import { Briefcase, FolderKanban } from 'lucide-react';
+import React, { useState } from 'react';
 import { experienceData, projectData } from '../constants';
-import type { Experience, Project } from '../types';
-import { useTheme } from '../components/ThemeContext';
-
-const CARD_BASE =
-    'group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.05] to-transparent shadow-[0_24px_60px_-28px_rgba(0,0,0,0.85)] backdrop-blur-md transition-all duration-300 hover:border-white/[0.14] hover:from-white/[0.07] hover:shadow-[0_28px_70px_-24px_rgba(0,0,0,0.9)]';
-
-const sectionTitle = (palette: Record<string, string>) => ({
-    color: palette.textStrong ?? palette.text,
-});
-
-const SectionHeader: React.FC<{
-    eyebrow: string;
-    title: string;
-    icon: React.ReactNode;
-    palette: Record<string, string>;
-}> = ({ eyebrow, title, icon, palette }) => (
-    <header className="mb-12 md:mb-14">
-        <div
-            className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] md:text-xs"
-            style={{ color: palette.textMuted }}
-        >
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04] text-neutral-300">
-                {icon}
-            </span>
-            {eyebrow}
-        </div>
-        <h2
-            id={title === 'Professional Experience' ? 'experience-heading' : 'projects-heading'}
-            className="text-2xl font-bold tracking-tight md:text-3xl"
-            style={sectionTitle(palette)}
-        >
-            {title}
-        </h2>
-        <div
-            className="mt-5 h-px max-w-xs bg-gradient-to-r from-white/25 via-white/10 to-transparent"
-            aria-hidden
-        />
-    </header>
-);
-
-const listVariants: Variants = {
-    hidden: {},
-    show: {
-        transition: { staggerChildren: 0.08 },
-    },
-};
-
-const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 16 },
-    show: {
-        opacity: 1,
-        y: 0,
-        transition: { type: 'spring' as const, stiffness: 380, damping: 32 },
-    },
-};
-
-type ExperienceCardProps = {
-    item: Experience;
-    index: number;
-    palette: Record<string, string>;
-};
-
-const TimelineDot: React.FC<{ palette: Record<string, string> }> = ({ palette }) => (
-    <span
-        className="absolute left-0 top-8 hidden h-3 w-3 -translate-x-[calc(50%-1px)] rounded-full border-2 border-neutral-600 bg-black shadow-[0_0_0_4px_rgba(0,0,0,0.5)] md:block"
-        style={{ borderColor: palette.accent }}
-        aria-hidden
-    />
-);
-
-const ExperienceCardBody: React.FC<ExperienceCardProps> = ({ item, index, palette }) => (
-    <article className={`${CARD_BASE} p-5 md:p-7`}>
-        <div
-            className="pointer-events-none absolute inset-y-4 left-0 w-px bg-gradient-to-b from-transparent via-white/15 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:hidden"
-            aria-hidden
-        />
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-10">
-            <div className="flex shrink-0 flex-col gap-2 lg:w-[26%]">
-                <span
-                    className="inline-flex w-fit max-w-full rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 text-[11px] font-semibold leading-snug tracking-wide text-neutral-200 md:text-xs"
-                    style={{ color: palette.textMuted }}
-                    data-no-text-cursor="true"
-                >
-                    {item.duration}
-                </span>
-                <span
-                    className="text-[10px] font-medium tabular-nums text-neutral-500 md:text-[11px]"
-                    aria-hidden
-                >
-                    {String(index + 1).padStart(2, '0')}
-                </span>
-            </div>
-            <div
-                className="min-w-0 flex-1 border-l-[2px] pl-5 lg:border-l-[3px] lg:pl-8"
-                style={{ borderLeftColor: palette.accent }}
-            >
-                <h3
-                    className="text-lg font-bold leading-snug tracking-tight md:text-xl"
-                    style={{ color: palette.textStrong ?? palette.text }}
-                >
-                    {item.role}
-                </h3>
-                <p
-                    className="mt-1.5 text-sm font-semibold md:text-base"
-                    style={{ color: palette.accent }}
-                >
-                    {item.company}
-                </p>
-                <ul
-                    className="mt-5 space-y-3 text-sm leading-relaxed md:text-[0.9375rem]"
-                    style={{ color: palette.text }}
-                >
-                    {item.description.map((desc, i) => (
-                        <li key={i} className="flex gap-3">
-                            <span
-                                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full opacity-80"
-                                style={{ backgroundColor: palette.accent }}
-                                aria-hidden
-                            />
-                            <span className="min-w-0">{desc}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </div>
-    </article>
-);
-
-const ExperienceCardStatic: React.FC<ExperienceCardProps> = (props) => (
-    <li className="relative md:pl-2">
-        <TimelineDot palette={props.palette} />
-        <ExperienceCardBody {...props} />
-    </li>
-);
-
-const ExperienceCardMotion: React.FC<ExperienceCardProps> = (props) => (
-    <motion.li className="relative md:pl-2" variants={itemVariants}>
-        <TimelineDot palette={props.palette} />
-        <ExperienceCardBody {...props} />
-    </motion.li>
-);
-
-const ProjectCard: React.FC<{ item: Project; palette: Record<string, string> }> = ({
-    item,
-    palette,
-}) => {
-    const reduceMotion = useReducedMotion();
-    const tags = item.technologies
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
-
-    const article = (
-        <article className={`${CARD_BASE} p-5 md:p-7`}>
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-10">
-                <div className="shrink-0 lg:w-[26%]">
-                    <span
-                        className="inline-flex w-fit max-w-full rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 text-[11px] font-semibold leading-snug tracking-wide md:text-xs"
-                        style={{ color: palette.textMuted }}
-                        data-no-text-cursor="true"
-                    >
-                        {item.duration}
-                    </span>
-                </div>
-                <div
-                    className="min-w-0 flex-1 border-l-[2px] pl-5 lg:border-l-[3px] lg:pl-8"
-                    style={{ borderLeftColor: palette.accent }}
-                >
-                    <h3
-                        className="text-lg font-bold leading-snug tracking-tight md:text-xl"
-                        style={{ color: palette.textStrong ?? palette.text }}
-                    >
-                        {item.name}
-                    </h3>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                            <span
-                                key={tag}
-                                className="rounded-md border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[11px] font-medium text-neutral-300 md:text-xs"
-                            >
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
-                    <ul
-                        className="mt-5 space-y-3 text-sm leading-relaxed md:text-[0.9375rem]"
-                        style={{ color: palette.text }}
-                    >
-                        {item.description.map((desc, i) => (
-                            <li key={i} className="flex gap-3">
-                                <span
-                                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full opacity-80"
-                                    style={{ backgroundColor: palette.accent }}
-                                    aria-hidden
-                                />
-                                <span className="min-w-0">{desc}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-        </article>
-    );
-
-    if (reduceMotion) {
-        return <li className="relative">{article}</li>;
-    }
-
-    return (
-        <motion.li className="relative" variants={itemVariants}>
-            {article}
-        </motion.li>
-    );
-};
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { SectionHeading } from '@/components/retro/RetroComponents';
+import { AsciiTextLoader } from '@/components/retro/AsciiTextLoader';
 
 const ExperiencePage: React.FC = () => {
-    const { palette } = useTheme();
-    const reduceMotion = useReducedMotion();
+    const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
 
     return (
-        <div className="w-full py-16 md:py-20">
-            <section className="mb-20 md:mb-28" aria-labelledby="experience-heading">
-                <SectionHeader
-                    eyebrow="Timeline"
-                    title="Professional Experience"
-                    icon={<Briefcase className="h-4 w-4" strokeWidth={1.75} aria-hidden />}
-                    palette={palette}
-                />
+        <div className="motion-page space-y-8">
+            {/* Header */}
+            <header>
+                <div className="text-[10px] text-[var(--fg-muted)] mb-2">&gt; ACCESSING MISSION_LOG.DAT...</div>
+                <h1 className="font-pixel text-base sm:text-lg uppercase tracking-[0.03em] text-[var(--fg-primary)]">
+                    <AsciiTextLoader text="MISSION LOG" delay={50} speed={25} />
+                </h1>
+                <p className="mt-2 text-xs text-[var(--fg-secondary)] max-w-xl">
+                    <AsciiTextLoader text="Mobile engineering across banking, hospitality, logistics, and commerce." delay={100} speed={12} />
+                </p>
+                <div className="mt-3 h-px bg-[var(--border-default)]" />
+            </header>
 
-                <div className="relative">
-                    <div
-                        className="absolute bottom-4 left-[15px] top-4 hidden w-px bg-gradient-to-b from-white/[0.18] via-white/10 to-white/[0.04] md:block lg:left-[17px]"
-                        aria-hidden
-                    />
-                    {reduceMotion ? (
-                        <ol className="relative flex list-none flex-col gap-8 md:gap-10 md:pl-10 lg:pl-12">
-                            {experienceData.map((item, index) => (
-                                <ExperienceCardStatic
-                                    key={index}
-                                    item={item}
-                                    index={index}
-                                    palette={palette}
-                                />
-                            ))}
-                        </ol>
-                    ) : (
-                        <motion.ol
-                            className="relative flex list-none flex-col gap-8 md:gap-10 md:pl-10 lg:pl-12"
-                            variants={listVariants}
-                            initial="hidden"
-                            whileInView="show"
-                            viewport={{ once: true, margin: '-24px' }}
+            {/* Experience */}
+            <section>
+                <SectionHeading number="01" title="DEPLOYMENTS" subtitle="Active and completed missions" />
+                <div className="motion-stagger space-y-3">
+                    {experienceData.map((item, index) => (
+                        <article
+                            key={`${item.company}-${item.role}`}
+                            className="border border-[var(--border-default)] bg-[var(--bg-surface)] transition-colors"
+                            style={{ borderRadius: 'var(--radius-md)' }}
                         >
-                            {experienceData.map((item, index) => (
-                                <ExperienceCardMotion
-                                    key={index}
-                                    item={item}
-                                    index={index}
-                                    palette={palette}
-                                />
-                            ))}
-                        </motion.ol>
-                    )}
+                            {/* Mission Header */}
+                            <button
+                                onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                                className="w-full text-left p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:bg-[var(--bg-muted)] transition-colors"
+                                aria-expanded={expandedIndex === index}
+                                aria-controls={`mission-${index}`}
+                            >
+                                <div className="flex items-start gap-3">
+                                    <span className="text-[10px] text-[var(--fg-muted)] mt-0.5 shrink-0">
+                                        {expandedIndex === index ? '▼' : '▶'}
+                                    </span>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[10px] text-[var(--fg-muted)] uppercase tracking-[0.15em]">
+                                                MISSION_{String(index + 1).padStart(2, '0')}
+                                            </span>
+                                            {index === 0 && (
+                                                <span className="text-[8px] uppercase tracking-[0.15em] text-[var(--fg-primary)] border border-[var(--border-strong)] px-1 py-px">
+                                                    LATEST
+                                                </span>
+                                            )}
+                                        </div>
+                                        <h3 className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--fg-primary)] mt-1">
+                                            <AsciiTextLoader text={item.role} delay={index * 120} speed={25} />
+                                        </h3>
+                                        <p className="text-[10px] text-[var(--fg-muted)] uppercase tracking-[0.08em] mt-0.5">
+                                            EMPLOYER: <AsciiTextLoader text={item.company} delay={index * 120 + 80} speed={25} />
+                                        </p>
+                                    </div>
+                                </div>
+                                <Badge>{item.duration}</Badge>
+                            </button>
+
+                            {/* Mission Details */}
+                            {expandedIndex === index && (
+                                <div
+                                    id={`mission-${index}`}
+                                    className="border-t border-[var(--border-default)] p-4 space-y-3"
+                                >
+                                    <div>
+                                        <span className="text-[9px] uppercase tracking-[0.15em] text-[var(--fg-muted)]">
+                                            OBJECTIVES:
+                                        </span>
+                                        <ul className="mt-2 space-y-2">
+                                            {item.description.map((desc, i) => (
+                                                <li key={i} className="flex gap-2 text-[11px] text-[var(--fg-secondary)] leading-relaxed">
+                                                    <span className="text-[var(--fg-muted)] shrink-0 mt-0.5">├─</span>
+                                                    <span>
+                                                        <AsciiTextLoader text={desc} delay={i * 120} speed={12} />
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            )}
+                        </article>
+                    ))}
                 </div>
             </section>
 
-            <section aria-labelledby="projects-heading">
-                <SectionHeader
-                    eyebrow="Portfolio"
-                    title="Notable Projects"
-                    icon={<FolderKanban className="h-4 w-4" strokeWidth={1.75} aria-hidden />}
-                    palette={palette}
-                />
+            {/* Projects */}
+            <section>
+                <SectionHeading number="02" title="SIDE_QUESTS" subtitle="Personal and client projects" />
+                <div className="motion-stagger grid gap-3 sm:grid-cols-2">
+                    {projectData.map((project, idx) => (
+                        <Card key={project.name}>
+                            <CardContent className="p-4 space-y-3">
+                                <div>
+                                    <h3 className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--fg-primary)]">
+                                        <AsciiTextLoader text={project.name} delay={idx * 150} speed={25} />
+                                    </h3>
+                                    <p className="text-[10px] text-[var(--fg-muted)] mt-0.5">{project.duration}</p>
+                                </div>
 
-                {reduceMotion ? (
-                    <ul className="flex list-none flex-col gap-8 md:gap-10">
-                        {projectData.map((item, index) => (
-                            <ProjectCard key={index} item={item} palette={palette} />
-                        ))}
-                    </ul>
-                ) : (
-                    <motion.ul
-                        className="flex list-none flex-col gap-8 md:gap-10"
-                        variants={listVariants}
-                        initial="hidden"
-                        whileInView="show"
-                        viewport={{ once: true, margin: '-24px' }}
-                    >
-                        {projectData.map((item, index) => (
-                            <ProjectCard key={index} item={item} palette={palette} />
-                        ))}
-                    </motion.ul>
-                )}
+                                <div>
+                                    <span className="text-[9px] uppercase tracking-[0.15em] text-[var(--fg-muted)]">
+                                        TECH LOADOUT:
+                                    </span>
+                                    <div className="mt-1 flex flex-wrap gap-1">
+                                        {project.technologies.split(',').map((tech) => (
+                                            <Badge key={tech.trim()}>{tech.trim()}</Badge>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span className="text-[9px] uppercase tracking-[0.15em] text-[var(--fg-muted)]">
+                                        RESULTS:
+                                    </span>
+                                    <ul className="mt-1 space-y-1">
+                                        {project.description.map((desc, i) => (
+                                            <li key={i} className="text-[10px] text-[var(--fg-secondary)] leading-relaxed flex gap-1.5">
+                                                <span className="text-[var(--fg-muted)] shrink-0">▸</span>
+                                                <span>
+                                                    <AsciiTextLoader text={desc} delay={idx * 150 + i * 100} speed={12} />
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
             </section>
         </div>
     );
