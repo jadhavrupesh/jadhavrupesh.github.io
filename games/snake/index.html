@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SNAKE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030303;
+      --bg-card: #0a0a0a;
+      --border: #27272a;
+      --border-hover: #3f3f46;
+      --fg: #fafafa;
+      --fg-muted: #71717a;
+      --fg-dim: #3f3f46;
+      --accent: #fafafa;
+      --radius: 8px;
+      --radius-sm: 6px;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      --font-retro: 'Press Start 2P', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      margin: 0;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      color: var(--fg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      width: 100%;
+      max-width: 480px;
+      padding: 16px;
+      height: 100%;
+    }
+
+    .header {
+      width: 100%;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header h1 {
+      font-family: var(--font-retro);
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    .header .version {
+      font-size: 10px;
+      color: var(--fg-dim);
+      letter-spacing: 1px;
+    }
+
+    /* ── mode toggle ── */
+    .mode-bar {
+      width: 100%;
+      display: flex;
+      gap: 4px;
+      margin-bottom: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: transparent;
+      color: var(--fg-dim);
+    }
+
+    .mode-btn.active {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .mode-btn:not(.active):hover {
+      color: var(--fg-muted);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .score-bar {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--fg-dim);
+    }
+
+    .stat-value {
+      font-family: var(--font-retro);
+      font-size: 14px;
+      color: var(--fg);
+    }
+
+    .stat-value.ai-on {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .canvas-wrap {
+      position: relative;
+      width: 100%;
+      flex: 1 1 0%;
+      min-height: 0;
+      max-height: 480px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-card);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      background: rgba(9, 9, 11, 0.88);
+      backdrop-filter: blur(4px);
+      z-index: 10;
+    }
+
+    .overlay.hidden { display: none; }
+
+    .overlay-title {
+      font-family: var(--font-retro);
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .overlay-sub {
+      font-size: 11px;
+      color: var(--fg-muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .overlay-score {
+      font-family: var(--font-retro);
+      font-size: 20px;
+      margin: 4px 0;
+    }
+
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 10px 24px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: var(--fg);
+      color: var(--bg);
+      border: 1px solid var(--fg);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--fg);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--fg-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--border);
+      color: var(--fg);
+      border-color: var(--border-hover);
+    }
+
+    .controls {
+      width: 100%;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: var(--fg-dim);
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg-card);
+      color: var(--fg-muted);
+      line-height: 1;
+    }
+
+    .mobile-controls {
+      display: none;
+      margin-top: 16px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .d-pad {
+      display: grid;
+      grid-template-areas:
+        ". up ."
+        "left . right"
+        ". down .";
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .d-pad button {
+      width: 56px;
+      height: 56px;
+      font-size: 16px;
+      background: var(--bg-card);
+      color: var(--fg-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: all 0.1s;
+      font-family: var(--font-mono);
+    }
+
+    .d-pad button:active {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+
+    .d-pad .up    { grid-area: up; }
+    .d-pad .left  { grid-area: left; }
+    .d-pad .right { grid-area: right; }
+    .d-pad .down  { grid-area: down; }
+
+    .footer {
+      margin-top: 16px;
+      font-size: 9px;
+      color: var(--fg-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    @media (pointer: coarse) {
+      .mobile-controls { display: block; }
+      .controls { display: none; }
+    }
+
+    @media (max-width: 500px) {
+      .game-container { padding: 10px; }
+      .header h1 { font-size: 11px; letter-spacing: 3px; }
+      .header { margin-bottom: 10px; padding-bottom: 8px; }
+      .stat-value { font-size: 12px; }
+      .score-bar { grid-template-columns: 1fr 1fr; gap: 6px; }
+      .mode-bar { margin-bottom: 8px; }
+      .controls { margin-top: 8px; padding-top: 8px; }
+      .footer { margin-top: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+
+    <div class="header">
+      <h1>Snake</h1>
+      <span class="version">v3.0</span>
+    </div>
+
+    <!-- Mode toggle -->
+    <div class="mode-bar">
+      <button class="mode-btn active" id="modeManual" onclick="setMode('manual')">Manual</button>
+      <button class="mode-btn" id="modeAI" onclick="setMode('ai')">Autopilot</button>
+    </div>
+
+    <div class="score-bar">
+      <div class="stat">
+        <span class="stat-label">Score</span>
+        <span class="stat-value" id="score">000</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Best</span>
+        <span class="stat-value" id="best">000</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Length</span>
+        <span class="stat-value" id="length">001</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Mode</span>
+        <span class="stat-value" id="modeLabel">MAN</span>
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+      <div class="overlay" id="overlay">
+        <div class="overlay-title">Ready</div>
+        <div class="overlay-sub">
+          Manual: arrow keys / WASD<br>
+          Autopilot: sit back and watch<br>
+          Space to start
+        </div>
+        <button class="btn btn-primary" id="startBtn">Start Game</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd>
+        <span>move</span>
+      </div>
+      <div class="control-group">
+        <kbd>space</kbd>
+        <span>pause</span>
+      </div>
+      <div class="control-group">
+        <kbd>tab</kbd>
+        <span>mode</span>
+      </div>
+    </div>
+
+    <div class="mobile-controls">
+      <div class="d-pad">
+        <button class="up" onclick="setDir(0,-1)">↑</button>
+        <button class="left" onclick="setDir(-1,0)">←</button>
+        <button class="right" onclick="setDir(1,0)">→</button>
+        <button class="down" onclick="setDir(0,1)">↓</button>
+      </div>
+    </div>
+
+    <div class="footer">Made with minimalism</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const lengthEl = document.getElementById('length');
+    const modeLabelEl = document.getElementById('modeLabel');
+    const overlay = document.getElementById('overlay');
+    const startBtn = document.getElementById('startBtn');
+    const modeManualBtn = document.getElementById('modeManual');
+    const modeAIBtn = document.getElementById('modeAI');
+
+    const GRID = 20;
+    const TILE = canvas.width / GRID;
+
+    let snake, dir, nextDir, food, score, best, speed, gameLoop, running, paused;
+    let autoPlay = false;
+
+    best = parseInt(localStorage.getItem('snakeBest') || '0', 10);
+    bestEl.textContent = pad(best);
+
+    function pad(n) { return String(n).padStart(3, '0'); }
+
+    function setMode(mode) {
+      autoPlay = (mode === 'ai');
+      modeManualBtn.classList.toggle('active', !autoPlay);
+      modeAIBtn.classList.toggle('active', autoPlay);
+      modeLabelEl.textContent = autoPlay ? 'AI' : 'MAN';
+      modeLabelEl.classList.toggle('ai-on', autoPlay);
+    }
+
+    function init() {
+      snake = [{ x: 10, y: 10 }];
+      dir = { x: 1, y: 0 };
+      nextDir = { x: 1, y: 0 };
+      score = 0;
+      speed = autoPlay ? 50 : 130;
+      scoreEl.textContent = pad(score);
+      lengthEl.textContent = pad(1);
+      moveHistory = [];
+      placeFood();
+    }
+
+    function placeFood() {
+      let pos;
+      do {
+        pos = {
+          x: Math.floor(Math.random() * GRID),
+          y: Math.floor(Math.random() * GRID)
+        };
+      } while (snake.some(s => s.x === pos.x && s.y === pos.y));
+      food = pos;
+    }
+
+    // ─────────────────────────────────────────────────────
+    // AI ENGINE v2 — Shortest-safe-path with look-ahead
+    // Strategy: BFS shortest path → simulate eating →
+    //   verify tail reachable post-eat → take shortcut.
+    //   Anti-loop: move history + forced direction change.
+    // ─────────────────────────────────────────────────────
+
+    const DIRS = [{x:0,y:-1},{x:0,y:1},{x:-1,y:0},{x:1,y:0}];
+    let moveHistory = [];
+    const MAX_HISTORY = 80;
+
+    function cellKey(x, y) { return x * GRID + y; }
+
+    // Build a Set of occupied cell keys from a given snake body array
+    function buildOccupied(body) {
+      const s = new Set();
+      for (let i = 0; i < body.length; i++) s.add(cellKey(body[i].x, body[i].y));
+      return s;
+    }
+
+    function inBounds(x, y) { return x >= 0 && x < GRID && y >= 0 && y < GRID; }
+
+    // BFS shortest path; returns full path array [{x,y},...] or null
+    function bfsPath(sx, sy, tx, ty, occupiedSet) {
+      if (sx === tx && sy === ty) return [];
+      const visited = new Set();
+      const parent = new Map();
+      const queue = [{x: sx, y: sy}];
+      visited.add(cellKey(sx, sy));
+
+      while (queue.length > 0) {
+        const cur = queue.shift();
+        for (const d of DIRS) {
+          const nx = cur.x + d.x;
+          const ny = cur.y + d.y;
+          const nk = cellKey(nx, ny);
+          if (!inBounds(nx, ny) || visited.has(nk) || occupiedSet.has(nk)) continue;
+          visited.add(nk);
+          parent.set(nk, {x: cur.x, y: cur.y});
+          if (nx === tx && ny === ty) {
+            // Reconstruct path
+            const path = [];
+            let ck = nk;
+            while (parent.has(ck)) {
+              const p = parent.get(ck);
+              const px = ck >= GRID ? Math.floor(ck / GRID) : 0;
+              const py = ck % GRID;
+              path.unshift({x: px, y: py});
+              ck = cellKey(p.x, p.y);
+            }
+            return path;
+          }
+          queue.push({x: nx, y: ny});
+        }
+      }
+      return null;
+    }
+
+    // BFS first direction only (lighter, for fallback)
+    function bfsDir(sx, sy, tx, ty, occupiedSet) {
+      const path = bfsPath(sx, sy, tx, ty, occupiedSet);
+      if (!path || path.length === 0) return null;
+      return { x: path[0].x - sx, y: path[0].y - sy };
+    }
+
+    // Flood fill: count reachable empty cells
+    function floodCount(sx, sy, occupiedSet) {
+      const visited = new Set();
+      const stack = [{x: sx, y: sy}];
+      let count = 0;
+      while (stack.length > 0) {
+        const cur = stack.pop();
+        const k = cellKey(cur.x, cur.y);
+        if (visited.has(k)) continue;
+        if (!inBounds(cur.x, cur.y) || occupiedSet.has(k)) continue;
+        visited.add(k);
+        count++;
+        for (const d of DIRS) stack.push({x: cur.x + d.x, y: cur.y + d.y});
+      }
+      return count;
+    }
+
+    // Simulate snake moving along a path and eating food at the end
+    // Returns the new snake body array after eating
+    function simulateEat(snakeBody, path) {
+      const newBody = snakeBody.map(s => ({...s}));
+      for (const step of path) {
+        newBody.unshift({x: step.x, y: step.y});
+        // Don't pop — food is at the end so snake grows by 1
+      }
+      // Actually we only keep the growth of 1: pop all but one extra
+      while (newBody.length > snakeBody.length + 1) {
+        newBody.pop();
+      }
+      return newBody;
+    }
+
+    // Simulate snake moving along path WITHOUT eating (normal moves)
+    function simulateMove(snakeBody, path) {
+      const newBody = snakeBody.map(s => ({...s}));
+      for (const step of path) {
+        newBody.unshift({x: step.x, y: step.y});
+        newBody.pop();
+      }
+      return newBody;
+    }
+
+    // Check if after eating food via this path, the snake can still reach its own tail
+    function canReachTailAfterEating(snakeBody, pathToFood) {
+      const futureSnake = simulateEat(snakeBody, pathToFood);
+      const futureHead = futureSnake[0];
+      const futureTail = futureSnake[futureSnake.length - 1];
+      // Occupied = all of future snake EXCEPT the tail (tail moves next tick)
+      const occ = new Set();
+      for (let i = 0; i < futureSnake.length - 1; i++) {
+        occ.add(cellKey(futureSnake[i].x, futureSnake[i].y));
+      }
+      const pathToTail = bfsPath(futureHead.x, futureHead.y, futureTail.x, futureTail.y, occ);
+      return pathToTail !== null;
+    }
+
+    // Detect if AI is stuck in a loop by checking move history for repeating patterns
+    function isLooping() {
+      if (moveHistory.length < 12) return false;
+      // Check for period-4 and period-6 loops (most common snake loops)
+      for (const period of [4, 6, 8]) {
+        if (moveHistory.length < period * 2) continue;
+        const recent = moveHistory.slice(-period);
+        const before = moveHistory.slice(-period * 2, -period);
+        if (recent.every((v, i) => v === before[i])) return true;
+      }
+      return false;
+    }
+
+    // Score a candidate direction for smart fallback
+    function scoreDirection(d, head, snakeBody, occupiedSet) {
+      const nx = head.x + d.x;
+      const ny = head.y + d.y;
+      if (!inBounds(nx, ny) || occupiedSet.has(cellKey(nx, ny))) return -1;
+
+      // Don't reverse
+      if (d.x === -dir.x && d.y === -dir.y && snake.length > 1) return -1;
+
+      const tempOcc = new Set(occupiedSet);
+      // Remove tail (it will move)
+      const tail = snakeBody[snakeBody.length - 1];
+      tempOcc.delete(cellKey(tail.x, tail.y));
+      tempOcc.add(cellKey(nx, ny));
+
+      const reachable = floodCount(nx, ny, tempOcc);
+
+      // Bonus: closer to food is better (manhattan)
+      const distToFood = Math.abs(nx - food.x) + Math.abs(ny - food.y);
+      const maxDist = GRID * 2;
+
+      // Weighted score: primarily safety (reachable area), secondarily proximity to food
+      return reachable * 100 + (maxDist - distToFood);
+    }
+
+    // Main AI decision
+    function aiChooseDir() {
+      const head = snake[0];
+      const tail = snake[snake.length - 1];
+
+      // Build occupied set (skip tail — it moves next tick)
+      const occ = new Set();
+      for (let i = 0; i < snake.length - 1; i++) {
+        occ.add(cellKey(snake[i].x, snake[i].y));
+      }
+
+      const fillRatio = snake.length / (GRID * GRID);
+      let chosenDir = null;
+
+      // ── Strategy 1: Direct shortest path to food with look-ahead ──
+      const pathToFood = bfsPath(head.x, head.y, food.x, food.y, occ);
+
+      if (pathToFood && pathToFood.length > 0) {
+        // Key check: after eating, can we still reach our tail?
+        // This prevents getting trapped after eating
+        if (canReachTailAfterEating(snake, pathToFood)) {
+          chosenDir = { x: pathToFood[0].x - head.x, y: pathToFood[0].y - head.y };
+
+          // Anti-loop: if we're looping even with food path, force a different safe move
+          if (!isLooping()) {
+            // Record and return
+            moveHistory.push(cellKey(head.x + chosenDir.x, head.y + chosenDir.y));
+            if (moveHistory.length > MAX_HISTORY) moveHistory.shift();
+            return chosenDir;
+          }
+          // If looping, fall through to try alternatives
+        }
+      }
+
+      // ── Strategy 2: When food path is unsafe or we're looping ──
+      // Try to find a longer/alternative path that's still safe
+
+      if (!chosenDir || isLooping()) {
+        // Rank all valid directions by: safety score + food proximity
+        const candidates = [];
+        for (const d of DIRS) {
+          const sc = scoreDirection(d, head, snake, occ);
+          if (sc >= 0) candidates.push({ d, score: sc });
+        }
+        candidates.sort((a, b) => b.score - a.score);
+
+        for (const c of candidates) {
+          const nx = head.x + c.d.x;
+          const ny = head.y + c.d.y;
+
+          // Simulate one step, then check if we can reach food from there
+          const movedSnake = simulateMove(snake, [{x: nx, y: ny}]);
+          const movedOcc = new Set();
+          for (let i = 0; i < movedSnake.length - 1; i++) {
+            movedOcc.add(cellKey(movedSnake[i].x, movedSnake[i].y));
+          }
+
+          const futurePathToFood = bfsPath(nx, ny, food.x, food.y, movedOcc);
+          if (futurePathToFood) {
+            // Verify post-eat safety too
+            if (canReachTailAfterEating(movedSnake, futurePathToFood)) {
+              chosenDir = c.d;
+              break;
+            }
+          }
+        }
+
+        // If nothing has post-eat safety, just pick highest-scoring safe move
+        if (!chosenDir && candidates.length > 0) {
+          // Pick the one with most reachable area (safest)
+          chosenDir = candidates[0].d;
+        }
+      }
+
+      // ── Strategy 3: Absolute fallback — any non-fatal move ──
+      if (!chosenDir) {
+        for (const d of DIRS) {
+          const nx = head.x + d.x;
+          const ny = head.y + d.y;
+          if (inBounds(nx, ny) && !occ.has(cellKey(nx, ny))) {
+            if (d.x === -dir.x && d.y === -dir.y && snake.length > 1) continue;
+            chosenDir = d;
+            break;
+          }
+        }
+      }
+
+      if (!chosenDir) chosenDir = dir;
+
+      moveHistory.push(cellKey(head.x + chosenDir.x, head.y + chosenDir.y));
+      if (moveHistory.length > MAX_HISTORY) moveHistory.shift();
+      return chosenDir;
+    }
+
+    function update() {
+      // AI picks direction before movement
+      if (autoPlay) {
+        const aiDir = aiChooseDir();
+        nextDir = aiDir;
+      }
+
+      dir = { ...nextDir };
+      const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+      if (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID) {
+        return gameOver();
+      }
+
+      if (snake.some(s => s.x === head.x && s.y === head.y)) {
+        return gameOver();
+      }
+
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y) {
+        score += 10;
+        scoreEl.textContent = pad(score);
+        lengthEl.textContent = pad(snake.length);
+        placeFood();
+        if (speed > 35) {
+          speed -= autoPlay ? 0.5 : 2;
+          clearInterval(gameLoop);
+          gameLoop = setInterval(update, speed);
+        }
+      } else {
+        snake.pop();
+      }
+
+      draw();
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Subtle dot grid
+      ctx.fillStyle = '#1a1a1e';
+      for (let x = 0; x < GRID; x++) {
+        for (let y = 0; y < GRID; y++) {
+          ctx.fillRect(x * TILE + TILE / 2, y * TILE + TILE / 2, 1, 1);
+        }
+      }
+
+      // AI: draw path preview (subtle)
+      if (autoPlay && running && !paused) {
+        const head = snake[0];
+        const occ = new Set();
+        for (let i = 0; i < snake.length - 1; i++) {
+          occ.add(cellKey(snake[i].x, snake[i].y));
+        }
+        const path = bfsPath(head.x, head.y, food.x, food.y, occ);
+        if (path) {
+          ctx.fillStyle = 'rgba(250, 250, 250, 0.06)';
+          for (const p of path) {
+            ctx.fillRect(p.x * TILE + 6, p.y * TILE + 6, TILE - 12, TILE - 12);
+          }
+        }
+      }
+
+      // Snake body
+      snake.forEach((seg, i) => {
+        const alpha = i === 0 ? 1 : Math.max(0.25, 1 - (i / snake.length) * 0.75);
+        ctx.fillStyle = `rgba(250, 250, 250, ${alpha})`;
+        const gap = 1;
+        ctx.fillRect(
+          seg.x * TILE + gap,
+          seg.y * TILE + gap,
+          TILE - gap * 2,
+          TILE - gap * 2
+        );
+      });
+
+      // Head eyes
+      if (snake.length > 0) {
+        const h = snake[0];
+        ctx.fillStyle = '#0a0a0a';
+        const cx = h.x * TILE + TILE / 2;
+        const cy = h.y * TILE + TILE / 2;
+        const d = 3;
+        ctx.fillRect(cx + dir.x * d - dir.y * 3 - 1, cy + dir.y * d - dir.x * 3 - 1, 2, 2);
+        ctx.fillRect(cx + dir.x * d + dir.y * 3 - 1, cy + dir.y * d + dir.x * 3 - 1, 2, 2);
+      }
+
+      // Food — blinking
+      const blink = Math.sin(Date.now() / 200) > -0.3;
+      if (blink) {
+        ctx.fillStyle = '#fafafa';
+        const p = 3;
+        ctx.fillRect(food.x * TILE + p, food.y * TILE + p, TILE - p * 2, TILE - p * 2);
+      }
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(food.x * TILE + TILE / 2 - 2, food.y * TILE + TILE / 2 - 2, 4, 4);
+
+      // AI mode indicator on canvas
+      if (autoPlay && running) {
+        ctx.fillStyle = 'rgba(250, 250, 250, 0.15)';
+        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('AI', 8, 16);
+      }
+    }
+
+    function gameOver() {
+      running = false;
+      clearInterval(gameLoop);
+      if (score > best) {
+        best = score;
+        bestEl.textContent = pad(best);
+        localStorage.setItem('snakeBest', best);
+      }
+
+      ctx.fillStyle = 'rgba(250, 250, 250, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      overlay.classList.remove('hidden');
+      overlay.innerHTML = `
+        <div class="overlay-title">Game Over</div>
+        <div class="overlay-score">${pad(score)}</div>
+        <div class="overlay-sub">
+          ${score >= best && score > 0 ? 'New best!' : `Best: ${pad(best)}`}
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary" onclick="startGame()">Play Again</button>
+          ${!autoPlay ? '<button class="btn btn-ghost" onclick="setMode(\'ai\');startGame()">Try AI</button>' : '<button class="btn btn-ghost" onclick="setMode(\'manual\');startGame()">Play Manual</button>'}
+        </div>
+      `;
+
+      // Auto-restart in AI mode after a short delay
+      if (autoPlay) {
+        setTimeout(() => {
+          if (!running && autoPlay) startGame();
+        }, 1500);
+      }
+    }
+
+    function startGame() {
+      overlay.classList.add('hidden');
+      init();
+      draw();
+      running = true;
+      paused = false;
+      gameLoop = setInterval(update, speed);
+    }
+
+    function togglePause() {
+      if (!running) return;
+      paused = !paused;
+      if (paused) {
+        clearInterval(gameLoop);
+        ctx.fillStyle = 'rgba(9, 9, 11, 0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fafafa';
+        ctx.font = '12px "Press Start 2P", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
+      } else {
+        gameLoop = setInterval(update, speed);
+      }
+    }
+
+    function setDir(x, y) {
+      if (autoPlay) return; // disable manual input in AI mode
+      if (dir.x === -x && dir.y === -y) return;
+      nextDir = { x, y };
+    }
+
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowUp':    case 'w': case 'W': e.preventDefault(); setDir(0, -1); break;
+        case 'ArrowDown':  case 's': case 'S': e.preventDefault(); setDir(0, 1);  break;
+        case 'ArrowLeft':  case 'a': case 'A': e.preventDefault(); setDir(-1, 0); break;
+        case 'ArrowRight': case 'd': case 'D': e.preventDefault(); setDir(1, 0);  break;
+        case ' ':
+          e.preventDefault();
+          if (!running) startGame();
+          else togglePause();
+          break;
+        case 'Tab':
+          e.preventDefault();
+          setMode(autoPlay ? 'manual' : 'ai');
+          break;
+      }
+    });
+
+    let touchStartX, touchStartY;
+    canvas.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', (e) => {
+      if (!touchStartX) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 20) return;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        setDir(dx > 0 ? 1 : -1, 0);
+      } else {
+        setDir(0, dy > 0 ? 1 : -1);
+      }
+    }, { passive: true });
+
+    startBtn.addEventListener('click', startGame);
+
+    init();
+    draw();
+  </script>
+</body>
+</html>
