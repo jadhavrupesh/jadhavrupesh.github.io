@@ -1,36 +1,21 @@
-import * as React from 'react';
-import { cn } from '@/lib/utils';
+import React from 'react';
 
-export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-    return (
-        <div
-            className={cn(
-                'border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--fg-primary)] transition-colors duration-[var(--duration-fast)]',
-                className,
-            )}
-            style={{ borderRadius: 'var(--radius-md)' }}
-            {...props}
-        />
-    );
+interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+  hover?: boolean;
 }
 
-export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-    return <div className={cn('space-y-1.5 p-4 border-b border-[var(--border-default)]', className)} {...props} />;
-}
-
-export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-    return (
-        <h3
-            className={cn('text-sm font-semibold uppercase tracking-[0.08em] text-[var(--fg-primary)]', className)}
-            {...props}
-        />
-    );
-}
-
-export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-    return <div className={cn('p-4', className)} {...props} />;
-}
-
-export function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-    return <p className={cn('text-xs text-[var(--fg-secondary)]', className)} {...props} />;
+export function Card({ children, className = '', hover = true }: CardProps) {
+  return (
+    <div
+      className={`rounded-xl p-5 ${hover ? 'card-hover' : ''} ${className}`}
+      style={{
+        background: 'var(--bg-surface)',
+        border: '1px solid var(--border)',
+      }}
+    >
+      {children}
+    </div>
+  );
 }

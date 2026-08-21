@@ -1,15 +1,36 @@
-import * as React from 'react';
-import { cn } from '@/lib/utils';
+import React from 'react';
 
-export function Badge({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
-    return (
-        <span
-            className={cn(
-                'inline-flex items-center gap-1.5 border border-[var(--border-strong)] bg-[var(--bg-surface)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--fg-secondary)] font-[var(--font-mono)]',
-                className,
-            )}
-            style={{ borderRadius: 'var(--radius-sm)' }}
-            {...props}
-        />
-    );
+interface BadgeProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function Badge({ children, className = '' }: BadgeProps) {
+  return (
+    <span
+      className={`inline-flex items-center text-xs px-2.5 py-1 rounded-md font-medium ${className}`}
+      style={{
+        background: 'var(--bg-elevated)',
+        color: 'var(--text-secondary)',
+        border: '1px solid var(--border)',
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+export function AccentBadge({ children, className = '' }: BadgeProps) {
+  return (
+    <span
+      className={`inline-flex items-center text-xs px-2.5 py-1 rounded-md font-medium ${className}`}
+      style={{
+        background: 'var(--accent-dim)',
+        color: 'var(--accent-text)',
+        border: '1px solid var(--border-accent)',
+      }}
+    >
+      {children}
+    </span>
+  );
 }

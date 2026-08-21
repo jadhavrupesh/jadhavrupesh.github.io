@@ -1,224 +1,190 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Github, Linkedin, MapPin, ExternalLink } from 'lucide-react';
-import { personalInfo, professionalSummary, skillData, experienceData } from '../constants';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { RetroFlower } from '@/components/retro/RetroFlower';
-import { AsciiTextLoader } from '@/components/retro/AsciiTextLoader';
-import { SectionHeading, StatusIndicator, TerminalPanel } from '@/components/retro/RetroComponents';
+import { personalInfo, professionalSummary, experienceData, skillData } from '../constants';
+import { Badge, AccentBadge } from '../components/ui/Badge';
+import { Card } from '../components/ui/Card';
 
-const stack = ['Flutter', 'Android', 'Kotlin', 'Dart', 'KMP', 'Clean Architecture'];
+export default function HomePage() {
+  const coreTech = ['Flutter', 'Android', 'Kotlin', 'Dart', 'KMP', 'Clean Architecture'];
 
-const HomePage: React.FC = () => {
-    return (
-        <div className="motion-page space-y-8">
-            {/* ── Hero Section ── */}
-            <section className="grid gap-6 lg:grid-cols-[1fr_280px] items-start">
-                {/* Left: Player Info */}
-                <div className="space-y-6">
-                    {/* Boot Status */}
-                    <div className="text-[10px] text-[var(--fg-muted)] space-y-0.5">
-                        <div>&gt; SYSTEM READY</div>
-                        <div>&gt; LOADING PLAYER PROFILE...</div>
-                        <div className="text-[var(--fg-secondary)]">&gt; PROFILE LOADED SUCCESSFULLY</div>
-                    </div>
-
-                    {/* Name & Role */}
-                    <div>
-                        <h1 className="font-pixel text-lg sm:text-xl md:text-2xl uppercase tracking-[0.03em] text-[var(--fg-primary)] leading-tight">
-                            <AsciiTextLoader text="Rupesh Jadhav" delay={120} speed={55} />
-                        </h1>
-                        <p className="mt-2 text-sm uppercase tracking-[0.1em] text-[var(--fg-secondary)]">
-                            <AsciiTextLoader text="Senior Mobile Developer" delay={240} speed={45} />
-                        </p>
-                    </div>
-
-                    {/* Summary */}
-                    <p className="text-xs leading-relaxed text-[var(--fg-secondary)] max-w-xl">
-                        <AsciiTextLoader text={professionalSummary} delay={380} speed={18} />
-                    </p>
-
-                    {/* Status & Location */}
-                    <div className="flex flex-wrap gap-4">
-                        <StatusIndicator active label="AVAILABLE FOR WORK" />
-                        <span className="inline-flex items-center gap-1 text-[10px] text-[var(--fg-muted)] uppercase tracking-[0.1em]">
-                            <MapPin className="h-3 w-3" />
-                            {personalInfo.location}
-                        </span>
-                    </div>
-
-                    {/* CTAs */}
-                    <div className="flex flex-wrap gap-3">
-                        <Button asChild variant="retro">
-                            <Link to="/experience">[ VIEW WORK ]</Link>
-                        </Button>
-                        <Button asChild variant="outline">
-                            <Link to="/game">[ GAME ]</Link>
-                        </Button>
-                        <Button asChild variant="outline">
-                            <Link to="/contact">
-                                <Mail className="h-3 w-3" />
-                                [ CONTACT ]
-                            </Link>
-                        </Button>
-                    </div>
-
-                    {/* Social */}
-                    <div className="flex gap-3">
-                        <a
-                            href={personalInfo.github}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-[var(--fg-muted)] hover:text-[var(--fg-primary)] transition-colors"
-                            aria-label="GitHub Profile"
-                        >
-                            <Github className="h-3.5 w-3.5" />
-                            GITHUB
-                            <ExternalLink className="h-2.5 w-2.5" />
-                        </a>
-                        <a
-                            href={personalInfo.linkedin}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-[var(--fg-muted)] hover:text-[var(--fg-primary)] transition-colors"
-                            aria-label="LinkedIn Profile"
-                        >
-                            <Linkedin className="h-3.5 w-3.5" />
-                            LINKEDIN
-                            <ExternalLink className="h-2.5 w-2.5" />
-                        </a>
-                    </div>
-                </div>
-
-                {/* Right: ASCII Art + Stats */}
-                <div className="hidden lg:block space-y-4">
-                    <RetroFlower />
-
-                    {/* Player Stats Panel */}
-                    <div className="space-y-1.5 text-[10px] px-2 py-3 border border-[var(--border-default)]" style={{ borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)' }}>
-                        <div className="flex justify-between">
-                            <span className="text-[var(--fg-muted)]">PLAYER:</span>
-                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="RUPESH JADHAV" delay={450} speed={50} /></span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-[var(--fg-muted)]">CLASS:</span>
-                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="SR. MOBILE DEV" delay={520} speed={50} /></span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-[var(--fg-muted)]">SPEC:</span>
-                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="FLUTTER / ANDROID / KMP" delay={590} speed={40} /></span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-[var(--fg-muted)]">EXP:</span>
-                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="5+ YEARS" delay={660} speed={50} /></span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-[var(--fg-muted)]">LOCATION:</span>
-                            <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="MUMBAI, INDIA" delay={730} speed={50} /></span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-[var(--fg-muted)]">STATUS:</span>
-                            <StatusIndicator active label="ONLINE" />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Mobile Stats Panel (visible on small screens) ── */}
-            <div className="lg:hidden px-3 py-3 border border-[var(--border-default)]" style={{ borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)' }}>
-                <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                    <div>
-                        <span className="text-[var(--fg-muted)]">CLASS: </span>
-                        <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="SR. MOBILE DEV" delay={450} speed={50} /></span>
-                    </div>
-                    <div>
-                        <span className="text-[var(--fg-muted)]">SPEC: </span>
-                        <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="FLUTTER / KMP" delay={520} speed={50} /></span>
-                    </div>
-                    <div>
-                        <span className="text-[var(--fg-muted)]">EXP: </span>
-                        <span className="text-[var(--fg-primary)]"><AsciiTextLoader text="5+ YEARS" delay={590} speed={50} /></span>
-                    </div>
-                    <div>
-                        <span className="text-[var(--fg-muted)]">STATUS: </span>
-                        <StatusIndicator active label="ONLINE" />
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Experience Preview ── */}
-            <section>
-                <SectionHeading number="01" title="MISSION_LOG" subtitle="Recent deployments" />
-                <div className="motion-stagger space-y-3">
-                    {experienceData.map((item) => (
-                        <Card key={`${item.company}-${item.role}`}>
-                            <CardContent className="p-4">
-                                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                                    <div>
-                                        <h3 className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--fg-primary)]">
-                                            <AsciiTextLoader text={item.role} delay={800} speed={40} />
-                                        </h3>
-                                        <p className="text-[10px] text-[var(--fg-muted)] uppercase tracking-[0.08em] mt-0.5">
-                                            <AsciiTextLoader text={`@ ${item.company}`} delay={870} speed={40} />
-                                        </p>
-                                    </div>
-                                    <Badge>{item.duration}</Badge>
-                                </div>
-                                <p className="mt-2 text-[11px] text-[var(--fg-secondary)] leading-relaxed line-clamp-2">
-                                    <AsciiTextLoader text={item.description[0]} delay={950} speed={18} />
-                                </p>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-                <div className="mt-4 text-center">
-                    <Button asChild variant="ghost" size="sm">
-                        <Link to="/experience">[ VIEW ALL MISSIONS → ]</Link>
-                    </Button>
-                </div>
-            </section>
-
-            {/* ── Core Stack ── */}
-            <section>
-                <SectionHeading number="02" title="TECH_LOADOUT" subtitle="Primary equipment" />
-                <div className="flex flex-wrap gap-2">
-                    {stack.map((item) => (
-                        <Badge key={item}>{item}</Badge>
-                    ))}
-                </div>
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {skillData.slice(0, 3).map((category) => (
-                        <Card key={category.title}>
-                            <CardContent className="p-3">
-                                <h3 className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--fg-muted)] mb-2">
-                                    {category.title}
-                                </h3>
-                                <div className="flex flex-wrap gap-1">
-                                    {category.skills.slice(0, 5).map((skill) => (
-                                        <span
-                                            key={skill}
-                                            className="text-[10px] text-[var(--fg-secondary)] border border-[var(--border-default)] px-1.5 py-0.5"
-                                            style={{ borderRadius: 'var(--radius-sm)' }}
-                                        >
-                                            {skill}
-                                        </span>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-                <div className="mt-4 text-center">
-                    <Button asChild variant="ghost" size="sm">
-                        <Link to="/skills">[ FULL INVENTORY → ]</Link>
-                    </Button>
-                </div>
-            </section>
+  return (
+    <div className="space-y-12">
+      {/* ── Hero ── */}
+      <section className="pt-4">
+        <div className="stagger-item" style={{ animationDelay: '0ms' }}>
+          <div
+            className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full mb-6"
+            style={{
+              background: 'var(--status-online-dim)',
+              border: '1px solid rgba(52, 211, 153, 0.2)',
+            }}
+          >
+            <span
+              className="inline-block w-1.5 h-1.5 rounded-full pulse-dot"
+              style={{ background: 'var(--status-online)' }}
+            />
+            <span style={{ color: 'var(--status-online)' }}>Available for work</span>
+          </div>
         </div>
-    );
-};
 
-export default HomePage;
+        <h1
+          className="stagger-item text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1]"
+          style={{ color: 'var(--text)', animationDelay: '50ms' }}
+        >
+          Rupesh Jadhav
+        </h1>
+        <p
+          className="stagger-item mt-3 text-lg sm:text-xl"
+          style={{ color: 'var(--text-secondary)', animationDelay: '100ms' }}
+        >
+          Senior Mobile Developer building <span className="gradient-text">scalable apps</span> across FinTech, Banking & Hospitality.
+        </p>
+        <p
+          className="stagger-item mt-4 text-sm max-w-2xl leading-relaxed"
+          style={{ color: 'var(--text-muted)', animationDelay: '150ms' }}
+        >
+          {professionalSummary}
+        </p>
+
+        {/* CTAs */}
+        <div className="stagger-item flex flex-wrap gap-3 mt-8" style={{ animationDelay: '200ms' }}>
+          <Link
+            to="/experience"
+            className="inline-flex items-center px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200"
+            style={{
+              background: 'var(--accent)',
+              color: 'var(--bg)',
+            }}
+          >
+            View Experience
+            <svg className="ml-1.5 w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
+          <Link
+            to="/contact"
+            className="inline-flex items-center px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200"
+            style={{
+              background: 'var(--bg-surface)',
+              color: 'var(--text)',
+              border: '1px solid var(--border-strong)',
+            }}
+          >
+            Get in touch
+          </Link>
+        </div>
+
+        {/* Social links */}
+        <div className="stagger-item flex gap-4 mt-6" style={{ animationDelay: '250ms' }}>
+          <a
+            href={personalInfo.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link-underline text-sm transition-colors"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            GitHub
+          </a>
+          <span style={{ color: 'var(--text-dim)' }}>·</span>
+          <a
+            href={personalInfo.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link-underline text-sm transition-colors"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            LinkedIn
+          </a>
+          <span style={{ color: 'var(--text-dim)' }}>·</span>
+          <a
+            href={`mailto:${personalInfo.email}`}
+            className="link-underline text-sm transition-colors"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            Email
+          </a>
+        </div>
+      </section>
+
+      {/* ── Core Stack ── */}
+      <section>
+        <h3 className="text-xs font-mono uppercase tracking-wider mb-4" style={{ color: 'var(--text-muted)' }}>
+          Core Stack
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {coreTech.map((tech, i) => (
+            <span
+              key={tech}
+              className="stagger-item"
+              style={{ animationDelay: `${300 + i * 50}ms` }}
+            >
+              <AccentBadge>{tech}</AccentBadge>
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Experience Preview ── */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>
+            Recent Experience
+          </h3>
+          <Link
+            to="/experience"
+            className="text-sm link-underline"
+            style={{ color: 'var(--accent-text)' }}
+          >
+            View all →
+          </Link>
+        </div>
+        <div className="space-y-4">
+          {experienceData.slice(0, 2).map((exp, i) => (
+            <div key={i} className="stagger-item" style={{ animationDelay: `${400 + i * 100}ms` }}>
+              <Card>
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <div>
+                    <h4 className="text-base font-semibold" style={{ color: 'var(--text)' }}>
+                      {exp.role}
+                    </h4>
+                    <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>
+                      {exp.company}
+                    </p>
+                  </div>
+                  <Badge>{exp.duration}</Badge>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                  {exp.description[0]}
+                </p>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Quick Stats ── */}
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {[
+          { label: 'Years', value: '5+' },
+          { label: 'Companies', value: '3' },
+          { label: 'Projects', value: '4+' },
+          { label: 'Platforms', value: 'Android / iOS / Web' },
+        ].map((stat, i) => (
+          <div key={i} className="stagger-item" style={{ animationDelay: `${500 + i * 80}ms` }}>
+            <div
+              className="rounded-xl p-4 text-center"
+              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}
+            >
+              <div className="text-xl font-bold" style={{ color: 'var(--accent-text)' }}>
+                {stat.value}
+              </div>
+              <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+                {stat.label}
+              </div>
+            </div>
+          </div>
+        ))}
+      </section>
+    </div>
+  );
+}
