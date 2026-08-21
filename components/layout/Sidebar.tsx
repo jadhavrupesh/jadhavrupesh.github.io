@@ -37,7 +37,7 @@ export default function Sidebar() {
                 end={item.path === '/'}
                 className={({ isActive }) =>
                   cn(
-                    'block px-3 py-2 text-sm rounded-lg transition-all duration-200',
+                    'flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200',
                     isActive ? 'font-medium' : 'font-normal'
                   )
                 }
@@ -46,15 +46,17 @@ export default function Sidebar() {
                   background: isActive ? 'var(--bg-hover)' : 'transparent',
                 })}
               >
-                <span className="flex items-center gap-2">
-                  {isActive && (
-                    <span
-                      className="inline-block w-1 h-1 rounded-full"
-                      style={{ background: 'var(--accent)' }}
-                    />
-                  )}
-                  {item.label}
-                </span>
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <span
+                        className="inline-block w-1 h-1 rounded-full shrink-0"
+                        style={{ background: 'var(--accent)' }}
+                      />
+                    )}
+                    <span>{item.label}</span>
+                  </>
+                )}
               </NavLink>
             </li>
           ))}
