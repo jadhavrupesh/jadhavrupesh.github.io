@@ -10,21 +10,15 @@ export function SectionTitle({ eyebrow, title, subtitle }: SectionTitleProps) {
   return (
     <div className="mb-8">
       {eyebrow && (
-        <div
-          className="text-xs font-mono mb-2 tracking-wide"
-          style={{ color: 'var(--accent-text)' }}
-        >
+        <div className="badge-tag font-mono text-[11px] mb-3 uppercase tracking-wider">
           {eyebrow}
         </div>
       )}
-      <h2
-        className="text-2xl sm:text-3xl font-bold tracking-tight"
-        style={{ color: 'var(--text)' }}
-      >
+      <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight gradient-text-subtle">
         {title}
       </h2>
       {subtitle && (
-        <p className="mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>
+        <p className="mt-2.5 text-base leading-relaxed max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
           {subtitle}
         </p>
       )}

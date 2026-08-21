@@ -1,91 +1,159 @@
-import React, { useState } from 'react';
-import { experienceData, projectData, educationData } from '../constants';
-import { Badge } from '../components/ui/Badge';
-import { Card } from '../components/ui/Card';
-import { SectionTitle } from '../components/ui/SectionTitle';
+import { useState } from 'react';
+import { personalInfo, aboutNarrative, experienceData, philosophyData, educationData } from '../constants';
 
 export default function ExperiencePage() {
-  const [expanded, setExpanded] = useState<number | null>(0);
+  const [openIndexes, setOpenIndexes] = useState<number[]>([0]);
+
+  const toggleIndex = (index: number) => {
+    setOpenIndexes((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
+  };
 
   return (
-    <div className="space-y-12">
-      <SectionTitle
-        eyebrow="01 / Experience"
-        title="Work History"
-        subtitle="5+ years building mobile apps across FinTech, Banking, Hospitality, Logistics & E-commerce."
-      />
-
-      {/* Experience Timeline */}
-      <section className="space-y-4">
-        {experienceData.map((exp, i) => (
-          <div key={i} className="stagger-item" style={{ animationDelay: `${i * 100}ms` }}>
-            <Card hover={false}>
-              <button
-                onClick={() => setExpanded(expanded === i ? null : i)}
-                className="w-full text-left"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <div>
-                    <h3 className="text-base font-semibold" style={{ color: 'var(--text)' }}>
-                      {exp.role}
-                    </h3>
-                    <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>
-                      {exp.company}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge>{exp.duration}</Badge>
-                    <svg
-                      className="w-4 h-4 transition-transform duration-200"
-                      style={{
-                        color: 'var(--text-muted)',
-                        transform: expanded === i ? 'rotate(180deg)' : 'rotate(0)',
-                      }}
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                </div>
-              </button>
-
-              {expanded === i && (
-                <div className="mt-4 pt-4 border-t space-y-2" style={{ borderColor: 'var(--border)' }}>
-                  {exp.description.map((desc, j) => (
-                    <div key={j} className="flex gap-2.5 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                      <span style={{ color: 'var(--accent)' }}>→</span>
-                      <span>{desc}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Card>
+    <>
+      {/* ── About Hero ── */}
+      <section className="hero" aria-labelledby="about-hero-heading">
+        <div className="container grid-12">
+          <div className="hero__content">
+            <p className="hero__eyebrow">Hello,</p>
+            <h1 className="hero__title" id="about-hero-heading">
+              Nice to meet you!
+            </h1>
+            <p className="hero__statement">
+              <span>Designing software &amp; architectures</span>
+              <span>that make complex work feel simple.</span>
+            </p>
           </div>
-        ))}
-      </section>
-
-      {/* Education */}
-      <section>
-        <SectionTitle eyebrow="02 / Education" title="Education" />
-        <div className="stagger-item">
-          <Card hover={false}>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div>
-                <h3 className="text-base font-semibold" style={{ color: 'var(--text)' }}>
-                  {educationData.degree}
-                </h3>
-                <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>
-                  {educationData.institution}
-                </p>
-              </div>
-              <Badge>{educationData.duration}</Badge>
-            </div>
-          </Card>
         </div>
       </section>
-    </div>
+
+      {/* ── Profile Portrait ── */}
+      <div className="container grid-12">
+        <figure className="about-profile">
+          <img
+            src="/profile.jpg"
+            alt={`${personalInfo.name}, Senior Mobile Developer`}
+            onError={(e) => {
+              // Fallback to stylized monogram if local profile image missing
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        </figure>
+      </div>
+
+      {/* ── Intro Monospace Paragraph ── */}
+      <div className="container grid-12">
+        <p className="about-intro">{aboutNarrative.intro}</p>
+      </div>
+
+      {/* ── 2-Column Story Breakdown ── */}
+      <section className="about-details container grid-12" aria-label="Professional narrative">
+        <div className="about-details__column--left">
+          <p>{aboutNarrative.col1}</p>
+        </div>
+        <div className="about-details__column--right">
+          <p>{aboutNarrative.col2}</p>
+          <div className="pt-4 border-t border-zinc-300 mt-4">
+            <p className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-2">
+              Education
+            </p>
+            <p className="text-sm font-mono font-medium text-black">
+              {educationData.degree} — {educationData.institution} ({educationData.duration})
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Download Resume CTA ── */}
+      <div className="container text-center mt-16">
+        <a
+          className="hero__cta"
+          href={personalInfo.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Connect on LinkedIn"
+        >
+          <span className="hero__cta-label">Connect on LinkedIn</span>
+          <span className="hero__cta-label hero__cta-label--hover" aria-hidden="true">
+            Connect on LinkedIn
+          </span>
+        </a>
+      </div>
+
+      {/* ── Interactive Experience Accordion (Obsidian Dark Canvas) ── */}
+      <section className="experience-section" id="experience" aria-labelledby="experience-heading">
+        <div className="container grid-12">
+          <h2 className="experience-section__label" id="experience-heading">
+            Experience
+          </h2>
+
+          <div className="experience-section__intro">
+            <p className="experience-section__statement">
+              <span>Five+ years of</span>
+              <span>architecting &amp; scaling.</span>
+            </p>
+          </div>
+
+          <div className="experience-section__list">
+            {experienceData.map((exp, i) => {
+              const isOpen = openIndexes.includes(i);
+              return (
+                <article key={exp.company + exp.duration} className="experience-item">
+                  <button
+                    className="experience-item__trigger"
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() => toggleIndex(i)}
+                  >
+                    <span className="experience-item__period">{exp.duration}</span>
+                    <span className="experience-item__summary">
+                      <span className="experience-item__title">{exp.role}</span>
+                      <span className="experience-item__company">{exp.company}</span>
+                    </span>
+                    <span
+                      className={`experience-item__indicator experience-item__indicator--plus`}
+                      aria-hidden="true"
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div className="experience-item__details">
+                      <ul className="space-y-2 list-disc list-inside">
+                        {exp.description.map((desc, j) => (
+                          <li key={j}>{desc}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── What I Bring (3-Column Philosophy Grid) ── */}
+      <section className="what-i-bring container" aria-labelledby="what-i-bring-heading">
+        <div className="section-rule" aria-hidden="true" />
+        <div className="section-header">
+          <h2 className="section-header__label" id="what-i-bring-heading">
+            What I bring
+          </h2>
+        </div>
+
+        <div className="what-i-bring__content grid-12">
+          {philosophyData.map((item) => (
+            <article key={item.number} className="what-i-bring__item">
+              <p className="what-i-bring__label">{item.number}</p>
+              <h3 className="what-i-bring__title">{item.title}</h3>
+              <p className="what-i-bring__description">{item.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
+
+

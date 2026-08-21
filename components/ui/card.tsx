@@ -9,11 +9,7 @@ interface CardProps {
 export function Card({ children, className = '', hover = true }: CardProps) {
   return (
     <div
-      className={`rounded-xl p-5 ${hover ? 'card-hover' : ''} ${className}`}
-      style={{
-        background: 'var(--bg-surface)',
-        border: '1px solid var(--border)',
-      }}
+      className={`glass-card p-6 ${hover ? 'hover:scale-[1.01]' : ''} ${className}`}
     >
       {children}
     </div>
