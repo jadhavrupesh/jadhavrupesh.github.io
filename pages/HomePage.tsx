@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { personalInfo, professionalSummary, experienceData, skillData } from '../constants';
-import { Badge, AccentBadge } from '../components/ui/Badge';
-import { Card } from '../components/ui/Card';
+import { Badge, AccentBadge } from '../components/ui/badge';
+import { Card } from '../components/ui/card';
 
 export default function HomePage() {
   const coreTech = ['Flutter', 'Android', 'Kotlin', 'Dart', 'KMP', 'Clean Architecture'];

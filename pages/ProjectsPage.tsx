@@ -1,7 +1,7 @@
 import React from 'react';
 import { projectData } from '../constants';
-import { Badge } from '../components/ui/Badge';
-import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/badge';
+import { Card } from '../components/ui/card';
 import { SectionTitle } from '../components/ui/SectionTitle';
 
 export default function ProjectsPage() {

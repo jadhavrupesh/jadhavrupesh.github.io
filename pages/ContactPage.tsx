@@ -1,7 +1,7 @@
 import React from 'react';
 import { personalInfo } from '../constants';
 import { SectionTitle } from '../components/ui/SectionTitle';
-import { Badge } from '../components/ui/Badge';
+import { Badge } from '../components/ui/badge';
 
 const contactLinks = [
   {

@@ -1,4 +1,36 @@
 # Rupesh Jadhav
+
+An interactive monochrome portfolio built with React, TypeScript, and Vite. Its animated ASCII sculpture is actual text: drag it or use arrow keys to rotate, switch between torus/sphere/cube, and use Play/Pause and Reset controls.
+
+### Run the portfolio
+
+```sh
+npm ci
+npm run dev
+```
+
+Use the local Vite URL rather than opening `index.html` directly. All portfolio content comes from `constants.ts`. The `/about`, `/experience`, `/skills`, `/projects`, and `/contact` routes open keyboard-accessible panels; Escape closes them.
+
+The ASCII animation uses native JavaScript and a single `<pre>` element, without WebGL or image assets. Rendering is capped at 24 frames per second and stops while hidden or offscreen. Reduced-motion preferences start the sculpture paused; visitors can deliberately play it or rotate it manually.
+
+```sh
+npx tsc --noEmit
+npm run build
+# With the development server running; tests use installed Google Chrome:
+npx playwright test tests/ascii.spec.ts --workers=1
+```
+
+The existing GitHub Actions workflow builds and publishes `dist` to the `gh-pages` branch after a push to `main`. Deployment settings are unchanged.
+
+### Inspiration
+
+- [ASCII Motion](https://www.ascii-motion.com/) — character-based motion and procedural text artwork.
+- [Three.js ASCII example](https://threejs.org/examples/webgl_effects_ascii.html) — shaded geometric forms rendered in text.
+
+The renderer and interface are original code. The existing local Neoda font supplies the display lettering; IBM Plex Mono and Space Grotesk load from Google Fonts with system fallbacks.
+
+---
+
 **Senior Mobile Developer**
 
 I am a Senior Mobile Developer with over five years of experience delivering secure, scalable, and high-performance applications. I have a proven track record of success across diverse industries, including **FinTech, Banking, Hospitality, Logistics, and E-commerce**. Over the years, I’ve contributed to end-to-end product lifecycles, from ideation and architecture to deployment and maintenance.
@@ -23,4 +55,3 @@ I work with a range of technologies that help me build secure, scalable, and hig
 **Mobile:** Kotlin · Java · Dart · Flutter · Compose · Android SDK · KMP  
 **Backend:** Firebase · Ktor · REST  
 **Tools:** Git · Codemagic · CI/CD · Performance Tuning · VAPT Security
-

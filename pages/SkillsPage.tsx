@@ -1,7 +1,7 @@
 import React from 'react';
 import { skillData, educationData } from '../constants';
 import { SectionTitle } from '../components/ui/SectionTitle';
-import { Badge } from '../components/ui/Badge';
+import { Badge } from '../components/ui/badge';
 
 export default function SkillsPage() {
   return (
