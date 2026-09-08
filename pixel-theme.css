@@ -229,3 +229,9 @@ html[data-theme='pixel'] .pixel-code-cursor { animation: pixel-cursor-blink 1s s
   html[data-theme='pixel'] .pixel-availability,
   html[data-theme='pixel'] .pixel-code-cursor { animation: none; }
 }
+
+/* Auto-typing code editor caret. */
+html[data-theme='pixel'] .pixel-code-caret { display: inline-block; width: 7px; height: 15px; margin-left: 2px; background: var(--pixel-cyan); vertical-align: -3px; animation: pixel-cursor-blink 1s steps(1) infinite; }
+html[data-theme='pixel'] .pixel-code { min-height: 320px; }
+@media (max-width: 800px) { html[data-theme='pixel'] .pixel-code { min-height: 250px; } }
+@media (prefers-reduced-motion: reduce) { html[data-theme='pixel'] .pixel-code-caret { animation: none; } }

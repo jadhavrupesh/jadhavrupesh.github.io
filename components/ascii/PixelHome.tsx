@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { personalInfo, projectData, skillData } from '../../constants';
 import PixelHeroLogo from './PixelHeroLogo';
+import PixelCodeEditor from './PixelCodeEditor';
 
 export default function PixelHome() {
   return <>
@@ -25,18 +26,7 @@ export default function PixelHome() {
         <div className="pixel-dither" aria-hidden="true" />
         <div className="pixel-editor">
           <div className="pixel-editor-toolbar"><span className="pixel-editor-file"><span aria-hidden="true">◇</span> rupesh.dart</span><span className="pixel-editor-path">portfolio / about</span><span className="pixel-editor-window" aria-hidden="true">− □ ×</span></div>
-          <div className="pixel-code" aria-label="Developer profile">
-            <div className="pixel-code-line"><code><span className="code-comment">// Good ideas deserve great apps.</span></code></div>
-            <div className="pixel-code-line"><code><span className="code-pink">class</span> <span className="code-yellow">Rupesh</span> <span className="code-pink">extends</span> <span className="code-yellow">MobileDeveloper</span> {'{'}</code></div>
-            <div className="pixel-code-line"><code>  <span className="code-pink">final</span> location = <span className="code-cyan">'{personalInfo.location}'</span>;</code></div>
-            <div className="pixel-code-line"><code>  <span className="code-pink">final</span> experience = <span className="code-cyan">'5+ years'</span>;</code></div>
-            <div className="pixel-code-line"><code>  <span className="code-pink">final</span> stack = [<span className="code-cyan">'Flutter', 'Android', 'KMP'</span>];</code></div>
-            <div className="pixel-code-line" aria-hidden="true"><code> </code></div>
-            <div className="pixel-code-line"><code>  <span className="code-yellow">Future</span>&lt;<span className="code-yellow">App</span>&gt; <span className="code-purple">build</span>(<span className="code-yellow">Idea</span> idea) <span className="code-pink">async</span> {'{'}</code></div>
-            <div className="pixel-code-line"><code>    <span className="code-pink">return</span> craft(idea, architecture: <span className="code-cyan">'clean'</span>);</code></div>
-            <div className="pixel-code-line"><code>  {'}'}</code></div>
-            <div className="pixel-code-line"><code>{'}'}<span className="pixel-code-cursor" aria-hidden="true" /></code></div>
-          </div>
+          <PixelCodeEditor />
           <div className="pixel-editor-status"><span><span aria-hidden="true">⑂</span> main <span className="pixel-status-dot" /> Ready to build</span><span>Dart <span className="pixel-editor-encoding">UTF-8</span></span></div>
         </div>
         <Link className="pixel-availability" to="/contact">
