@@ -58,7 +58,10 @@ html[data-theme='pixel'] .system-bar { display: none; }
   background-size: 1.4em !important;
 }
 .pattern-tentacle {
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAKAQMAAABhWYebAAAABlBMVEUAAABVKqx/G3Z/AAAAAXRSTlMAQObYZgAAACtJREFUCNdj+M/AwfC/QYLh/zELhv/PKhj+//8BxsZAbAjEDP8/MDDUPwAAjukUhWE2d64AAAAASUVORK5CYII=") 50% repeat-x;
+  /* Exact wave from jules.google: a 21x10 PNG tile repeated horizontally,
+     native size, vertically centred in the 24px line. */
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAKAQMAAABhWYebAAAABlBMVEUAAABVKqx/G3Z/AAAAAXRSTlMAQObYZgAAACtJREFUCNdj+M/AwfC/QYLh/zELhv/PKhj+//8BxsZAbAjEDP8/MDDUPwAAjukUhWE2d64AAAAASUVORK5CYII=") 50% center repeat-x;
+  transition: opacity 0.35s ease-out;
 }
 
 /* Jules Keyframes */
@@ -66,7 +69,7 @@ html[data-theme='pixel'] .system-bar { display: none; }
   0%, 100% { background-color: transparent; }
   50% { background-color: rgba(93, 67, 198, 0.5); }
 }
-@keyframes ink-appear-tentacle { 
+@keyframes ink-appear-tentacle {
   0% { opacity: 0; transform: translate(-10%); }
   100% { opacity: 0.8; transform: translate(0px); }
 }
@@ -142,8 +145,9 @@ html[data-theme='pixel'] .terminal-header {
   text-decoration: none;
 }
 .pixel-header-squid {
-  width: 32px;
+  width: 34px;
   height: 34px;
+  object-fit: contain;
   color: var(--pixel-purple);
   transition: transform 0.2s ease, filter 0.2s ease;
 }
@@ -1248,10 +1252,8 @@ html[data-theme='pixel'] .terminal-footer a:hover { color: var(--pixel-cyan); }
 }
 
 .pixel-hero-subtitle {
-  position: absolute;
-  bottom: 50px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  margin: -18px 0 0 0 !important;
   color: #fffbeb !important;
   background-color: #1D0245 !important;
   padding: 6px 16px !important;
@@ -1265,12 +1267,11 @@ html[data-theme='pixel'] .terminal-footer a:hover { color: var(--pixel-cyan); }
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
-  margin: 0 !important;
   z-index: 10;
 }
 @media (max-width: 768px) {
   .pixel-hero-subtitle {
-    bottom: 20px;
+    margin-top: -10px !important;
     font-size: 10px !important;
     padding: 4px 8px !important;
   }

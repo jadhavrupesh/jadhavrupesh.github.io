@@ -111,7 +111,7 @@ function highlightLine(line: string): string {
 }
 
 type SquidState = 'moving' | 'thinking' | 'editing' | 'idle';
-const TOTAL_VIEWPORT_LINES = 32;
+const TOTAL_VIEWPORT_LINES = 31;
 
 export default function PixelCodeEditor() {
   const [code, setCode] = useState(INITIAL_CODE);
@@ -122,7 +122,9 @@ export default function PixelCodeEditor() {
 
   const getLinePos = (line: number) => ({
     x: 71,
-    y: 34 + (line - 1) * 24,
+    // Target the vertical CENTRE of the line so the squid's midline (and the
+    // wave it emits) sits exactly on the line, not above it.
+    y: 34 + (line - 1) * 24 + 12,
   });
 
   useEffect(() => {
@@ -138,64 +140,88 @@ export default function PixelCodeEditor() {
 
     const runAnimation = async () => {
       while (isMounted.current) {
-        // Step 1: Reset to initial clean Dart code
+        // Fresh copy of the base file the agent then edits in place.
+        const lines = INITIAL_CODE.split('\n');
+        const render = () => setCode(lines.join('\n'));
+
+        // Emit the inking wave ONCE for a step: squid moves to the line, the
+        // wave sweeps across it, then clears — before any code is written.
+        const emitWave = async (lineNum: number): Promise<boolean> => {
+          setSquidPos(getLinePos(lineNum));
+          setSquidState('editing');
+          setActiveInkingLine(lineNum);
+          if (!(await sleep(950))) return false; // wave sweeps in (1.2s anim)
+          setActiveInkingLine(null);
+          if (!(await sleep(350))) return false; // wave fades out (0.35s)
+          return true;
+        };
+
+        // Type `text` into an existing line, character by character. No wave —
+        // the step's single emitWave() already played.
+        const typeLine = async (idx: number, text: string): Promise<boolean> => {
+          setSquidPos(getLinePos(idx + 1));
+          setSquidState('editing');
+          lines[idx] = '';
+          render();
+          if (!(await sleep(60))) return false;
+          for (let i = 1; i <= text.length; i++) {
+            if (!isMounted.current) return false;
+            lines[idx] = text.substring(0, i);
+            render();
+            const ch = text[i - 1];
+            if (!(await sleep(ch === ' ' ? 30 : 16 + Math.random() * 20))) return false;
+          }
+          lines[idx] = text;
+          render();
+          if (!(await sleep(150))) return false;
+          return true;
+        };
+
+        // Open a blank line at `idx` (pushes the rest down) then type into it.
+        const insertLine = async (idx: number, text: string): Promise<boolean> => {
+          lines.splice(idx, 0, '');
+          render();
+          if (!(await sleep(110))) return false;
+          return typeLine(idx, text);
+        };
+
+        const think = async (ms: number): Promise<boolean> => {
+          setActiveInkingLine(null);
+          setSquidState('thinking');
+          return sleep(ms);
+        };
+
+        // Step 0: reset + read the file.
         setCode(INITIAL_CODE);
         setActiveInkingLine(null);
         setSquidPos(getLinePos(17));
-        setSquidState('thinking');
-        if (!(await sleep(2200))) return;
+        if (!(await think(2000))) return;
 
-        // Step 2: Squid edits line 17 with production client apps list
-        setSquidState('editing');
-        const targetLine = "  final List<String> apps = const ['HDFC Smart Now', 'ICICI', 'Axis Mobile'];";
-        const editLineIdx = 16; // line 17 is index 16
+        // Step 1: add a production flag after `experienceYears`. Wave → write.
+        if (!(await emitWave(16))) return;
+        if (!(await insertLine(15, '  final bool shipsToProduction = true;'))) return;
+        if (!(await think(650))) return;
 
-        for (let i = 1; i <= targetLine.length; i++) {
-          if (!isMounted.current) return;
-          const chunk = targetLine.substring(0, i);
-          setCode(prev => {
-            const l = prev.split('\n');
-            if (l.length > editLineIdx) {
-              l[editLineIdx] = chunk;
-            }
-            return l.join('\n');
-          });
-          if (!(await sleep(20))) return;
-        }
+        // Step 2: replace the TODO with the real client list. Wave → write.
+        if (!(await emitWave(18))) return;
+        if (!(await typeLine(17, "  final List<String> apps = const ['HDFC Smart Now', 'ICICI', 'Axis Mobile'];"))) return;
+        if (!(await think(650))) return;
 
-        setActiveInkingLine(17);
-        if (!(await sleep(600))) return;
+        // Step 3: rework the shipFeatures() body — ONE wave, then the whole
+        // block (comment + for-loop) is written out.
+        if (!(await emitWave(20))) return;
+        if (!(await typeLine(19, '    // Target: 60fps · VAPT-hardened · CI/CD via Codemagic'))) return;
+        if (!(await typeLine(20, '    for (final app in apps) {'))) return;
+        if (!(await insertLine(21, "      print('Shipped ' + app + ' with Clean Architecture');"))) return;
+        if (!(await insertLine(22, '    }'))) return;
+        if (!(await think(750))) return;
+
+        // Step 4: main() — ONE wave, then finish the code.
+        if (!(await emitWave(30))) return;
+        if (!(await insertLine(29, "  print('shipsToProduction: ' + rupesh.shipsToProduction.toString());"))) return;
+
+        // Step 5: step back and admire the work.
         setActiveInkingLine(null);
-
-        // Step 3: Move squid to line 20 and update print statement
-        setSquidPos(getLinePos(20));
-        setSquidState('moving');
-        if (!(await sleep(400))) return;
-        setSquidState('thinking');
-        if (!(await sleep(600))) return;
-        setSquidState('editing');
-
-        const updatedPrint = "    print('Shipped: ' + apps.join(' • '));";
-        const printLineIdx = 19; // line 20 is index 19
-
-        for (let i = 10; i <= updatedPrint.length; i++) {
-          if (!isMounted.current) return;
-          const chunk = updatedPrint.substring(0, i);
-          setCode(prev => {
-            const l = prev.split('\n');
-            if (l.length > printLineIdx) {
-              l[printLineIdx] = chunk;
-            }
-            return l.join('\n');
-          });
-          if (!(await sleep(18))) return;
-        }
-
-        setActiveInkingLine(20);
-        if (!(await sleep(700))) return;
-        setActiveInkingLine(null);
-
-        // Step 4: Rest in idle
         setSquidState('idle');
         if (!(await sleep(5000))) return;
       }
@@ -221,13 +247,13 @@ export default function PixelCodeEditor() {
   const isThinking = squidState === 'thinking';
 
   return (
-    <div className="w-full md:p-0 relative max-w-screen-lg md:overflow-visible overflow-x-hidden mx-auto -mt-4 min-h-[37vh] md:min-h-[65vh]">
+    <div className="w-full md:p-0 relative max-w-screen-lg md:overflow-visible overflow-x-hidden mx-auto">
       {/* 1. Main Code Editor Window inside Purple Dither Frame */}
       <div className="w-full relative">
         <div className="w-full md:pattern-square-light bg-size-[1.4em] bg-repeat p-4 rounded-pixel-lg relative z-10">
           <div
             className="bg-[#130825] p-4 py-6 text-sm md:p-6 relative rounded-pixel-sm font-mono overflow-hidden max-w-full"
-            style={{ lineHeight: '24px', minHeight: '768px' }}
+            style={{ lineHeight: '24px', minHeight: '744px' }}
           >
             {/* Squid Agent with Thought Bubble */}
             <div
@@ -235,7 +261,7 @@ export default function PixelCodeEditor() {
               style={{
                 left: 0,
                 top: 0,
-                transform: `translate(${squidPos.x}px, ${squidPos.y}px) translate(-100%, -90%)`,
+                transform: `translate(${squidPos.x}px, ${squidPos.y}px) translate(-100%, -50%)`,
                 transition: `transform ${squidState === 'moving' ? '700ms' : '300ms'} ease-in-out, opacity 300ms ease-in-out`,
                 zIndex: 20,
               }}
