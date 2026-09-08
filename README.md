@@ -20,7 +20,7 @@ npm run build
 npx playwright test tests/ascii.spec.ts --workers=1
 ```
 
-The existing GitHub Actions workflow builds and publishes `dist` to the `gh-pages` branch after a push to `main`. Deployment settings are unchanged.
+The GitHub Actions workflow builds and deploys `dist` directly to GitHub Pages after a push to `main`.
 
 ### Inspiration
 
