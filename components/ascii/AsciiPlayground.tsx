@@ -1,47 +1,25 @@
 import { useEffect, useId, useRef, useState } from 'react';
 
-type Shape = 'Torus' | 'Sphere' | 'Cube';
 type Point = [number, number, number, number, number, number, number];
 const COLUMNS = 92;
 const ROWS = 46;
 const DENSITY = ' .,:;irsXA253hMHGS#9B&@';
 const INITIAL_ROTATION = { x: 0.55, y: 0.38 };
 
-function makePoints(shape: Shape): Point[] {
+function makeTorusPoints(): Point[] {
   const points: Point[] = [];
-  if (shape === 'Cube') {
-    for (let side = 0; side < 3; side++) {
-      for (const direction of [-1, 1]) {
-        for (let a = -1.35; a <= 1.35; a += 0.045) {
-          for (let b = -1.35; b <= 1.35; b += 0.045) {
-            const p = [0, 0, 0];
-            const n = [0, 0, 0];
-            p[side] = direction * 1.35;
-            p[(side + 1) % 3] = a;
-            p[(side + 2) % 3] = b;
-            n[side] = direction;
-            points.push([p[0], p[1], p[2], n[0], n[1], n[2], Math.max(Math.abs(a), Math.abs(b)) > 1.27 ? 1.2 : 0.8]);
-          }
-        }
-      }
-    }
-    return points;
-  }
   for (let u = 0; u < Math.PI * 2; u += 0.035) {
-    for (let v = 0; v < Math.PI * (shape === 'Sphere' ? 1 : 2); v += 0.055) {
+    for (let v = 0; v < Math.PI * 2; v += 0.055) {
       const cu = Math.cos(u), su = Math.sin(u), cv = Math.cos(v), sv = Math.sin(v);
-      if (shape === 'Torus') {
-        points.push([(1.4 + 0.62 * cv) * cu, (1.4 + 0.62 * cv) * su, 0.62 * sv, cv * cu, cv * su, sv, 1]);
-      } else {
-        points.push([1.85 * sv * cu, 1.85 * sv * su, 1.85 * cv, sv * cu, sv * su, cv, 0.78 + 0.22 * Math.cos(u * 10)]);
-      }
+      points.push([(1.4 + 0.62 * cv) * cu, (1.4 + 0.62 * cv) * su, 0.62 * sv, cv * cu, cv * su, sv, 1]);
     }
   }
   return points;
 }
 
+const TORUS_POINTS = makeTorusPoints();
+
 export default function AsciiPlayground() {
-  const [shape, setShape] = useState<Shape>('Torus');
   const [paused, setPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const stage = useRef<HTMLDivElement>(null);
   const output = useRef<HTMLPreElement>(null);
@@ -59,7 +37,7 @@ export default function AsciiPlayground() {
   }, []);
 
   useEffect(() => {
-    const points = makePoints(shape);
+    const points = TORUS_POINTS;
     const depths = new Float32Array(COLUMNS * ROWS);
     const characters = new Array<string>(COLUMNS * ROWS);
     let request = 0;
@@ -127,14 +105,14 @@ export default function AsciiPlayground() {
       document.removeEventListener('visibilitychange', syncPlayback);
       draw.current = () => {};
     };
-  }, [shape, paused]);
+  }, [paused]);
 
   const reset = () => {
     rotation.current = { ...INITIAL_ROTATION };
     draw.current();
   };
 
-  return <div className="ascii-playground" data-shape={shape.toLowerCase()}>
+  return <div className="ascii-playground" data-shape="torus">
     <div className="playground-topline"><span>FIG. 001 / DIGITAL SCULPTURE</span><span className="playground-live"><i/>{paused ? 'PAUSED' : 'LIVE RENDER'}</span></div>
     <div
       ref={stage}
@@ -183,7 +161,11 @@ export default function AsciiPlayground() {
     </div>
     <div className="playground-bottomline"><span>92 × 46 CHARACTERS</span><span>CHARACTER SET / ASCII</span></div>
     <div className="playground-controls">
-      <div className="shape-options" role="group" aria-label="Sculpture shape">{(['Torus', 'Sphere', 'Cube'] as const).map((option, index) => <button className={shape === option ? 'active' : ''} key={option} onClick={() => { setShape(option); reset(); }} aria-pressed={shape === option}><span>0{index + 1}</span>{option}</button>)}</div>
+      <div className="shape-options" role="group" aria-label="Sculpture shape">
+        <button className="active" onClick={reset} aria-pressed="true">
+          <span>01</span>Torus
+        </button>
+      </div>
       <div className="playback-options"><button className="terminal-button" onClick={() => setPaused(value => !value)} aria-label={paused ? 'Play animation' : 'Pause animation'}><span aria-hidden="true">{paused ? '▷' : 'Ⅱ'}</span>{paused ? 'Play' : 'Pause'}</button><button className="terminal-button" onClick={reset} aria-label="Reset rotation"><span aria-hidden="true">↺</span></button></div>
     </div>
     <p className="playground-help" id={helpId}>Drag or use arrow keys to rotate. Play to keep it moving.</p>

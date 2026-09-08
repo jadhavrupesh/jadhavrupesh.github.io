@@ -1,6 +1,6 @@
 # Rupesh Jadhav
 
-An interactive monochrome portfolio built with React, TypeScript, and Vite. Its animated ASCII sculpture is actual text: drag it or use arrow keys to rotate, switch between torus/sphere/cube, and use Play/Pause and Reset controls.
+An interactive monochrome portfolio built with React, TypeScript, and Vite. Its animated ASCII torus sculpture is actual text: drag it or use arrow keys to rotate, and use Play/Pause and Reset controls.
 
 ### Run the portfolio
 

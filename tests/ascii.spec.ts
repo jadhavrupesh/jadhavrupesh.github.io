@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { educationData, experienceData, personalInfo, professionalSummary, projectData, skillData } from '../constants';
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL || process.env.BASE_URL || 'http://127.0.0.1:5173';
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || process.env.BASE_URL || 'http://localhost:5173';
 const url = (path = '/') => new URL(path, baseURL).href;
 const routes = [
   ['about', 'A little about me.', professionalSummary],
@@ -12,6 +12,11 @@ const routes = [
 ] as const;
 
 test.use({ browserName: 'chromium', channel: 'chrome', viewport: { width: 1440, height: 1000 }, contextOptions: { reducedMotion: 'reduce' } });
+
+test.describe('ASCII theme', () => {
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => { if (!localStorage.getItem('portfolio-theme')) localStorage.setItem('portfolio-theme', 'ascii'); });
+});
 
 test('direct routes preserve portfolio content, native accordions, and Escape navigation', async ({ page }) => {
   for (const [path, title, content] of routes) {
@@ -59,7 +64,34 @@ test('main navigation opens every section and the close button returns home', as
   await expect(page.getByRole('heading', { level: 1 })).toContainText('RUPESH');
 });
 
-test('ASCII sculpture changes shape, rotates by keyboard and drag, and resets', async ({ page }) => {
+test('die switches complete layouts, keeps keyboard focus, and remembers the selected theme', async ({ page }) => {
+  await page.addInitScript(() => { Math.random = () => 0.49; });
+  await page.goto(url());
+  const die = page.locator('.theme-switcher');
+  await expect(die).toBeVisible();
+  await die.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'pixel');
+  await expect(die.locator('canvas')).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Interactive ASCII sculpture' })).toHaveCount(0);
+  await expect(die.getByRole('status')).toContainText('Rolled 3.');
+  await expect(die).toBeFocused();
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'pixel');
+  await page.locator('.terminal-nav a[href="/projects"]').click();
+  await expect(page.getByRole('dialog')).toContainText(projectData[0].description[0]);
+  await page.keyboard.press('Escape');
+  await die.focus();
+  await die.press('Enter');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'ascii');
+  await expect(page.getByRole('region', { name: 'Interactive ASCII sculpture' })).toBeVisible();
+  const artwork = die.locator('pre[data-frame]');
+  await expect(artwork).toBeVisible();
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  const initialFrame = Number(await artwork.getAttribute('data-frame'));
+  await expect.poll(async () => Number(await artwork.getAttribute('data-frame'))).toBeGreaterThan(initialFrame + 2);
+});
+
+test('ASCII sculpture renders torus, rotates by keyboard and drag, and resets', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(url());
@@ -69,11 +101,11 @@ test('ASCII sculpture changes shape, rotates by keyboard and drag, and resets', 
   expect((await artwork.textContent())?.replace(/\s/g, '').length).toBeGreaterThan(500);
   const initialRotation = await artwork.getAttribute('data-rotation');
   const torus = await artwork.textContent();
-  for (const shape of ['Sphere', 'Cube', 'Torus']) {
-    await page.getByRole('button', { name: new RegExp(shape) }).click();
-    await expect(page.getByRole('button', { name: new RegExp(shape) })).toHaveAttribute('aria-pressed', 'true');
-    if (shape !== 'Torus') await expect(artwork).not.toHaveText(torus!);
-  }
+  const torusBtn = page.getByRole('button', { name: /Torus/i });
+  await expect(torusBtn).toBeVisible();
+  await expect(torusBtn).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: /Sphere/i })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Cube/i })).toHaveCount(0);
   await stage.focus();
   await stage.press('ArrowRight');
   await expect(artwork).not.toHaveAttribute('data-rotation', initialRotation!);
@@ -94,7 +126,7 @@ test('ASCII sculpture changes shape, rotates by keyboard and drag, and resets', 
 
 test('reduced motion starts paused, explicit playback works, and hidden pages stop rendering', async ({ page }) => {
   await page.goto(url());
-  const artwork = page.locator('pre[data-frame]');
+  const artwork = page.locator('pre.ascii-output[data-frame]');
   await expect(artwork).toBeVisible();
   await expect(page.getByRole('button', { name: 'Play animation' })).toBeEnabled();
   const initialFrame = await artwork.getAttribute('data-frame');
@@ -127,7 +159,7 @@ test('320px, 375px, and 768px layouts keep the name and contact panel within the
   for (const width of [320, 375, 768]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(url());
-    await expect(page.locator('pre[data-frame]')).toBeVisible();
+    await expect(page.locator('pre.ascii-output[data-frame]')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     const name = await page.getByRole('heading', { level: 1 }).evaluate(element => {
       const range = document.createRange();
@@ -162,4 +194,23 @@ test('contact links and clipboard success and failure feedback work', async ({ p
   await dialog.getByRole('button', { name: 'Copy email address' }).click();
   await expect(dialog.getByRole('status')).toContainText('Could not copy.');
   await expect(dialog.getByRole('link', { name: personalInfo.email })).toBeVisible();
+});
+});
+
+test('ASCII theme is the primary default and fits desktop and mobile with working navigation', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  for (const width of [1440, 768, 375, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(url());
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'ascii');
+    await expect(page.locator('.theme-switcher')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await page.locator('.terminal-nav a[href="/contact"]').click();
+    await expect(page.getByRole('dialog').getByRole('link', { name: personalInfo.email })).toBeVisible();
+    expect(await page.getByRole('dialog').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+    await page.keyboard.press('Escape');
+  }
+  expect(errors).toEqual([]);
 });
