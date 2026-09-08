@@ -3,7 +3,6 @@ import PixelCodeEditor from './PixelCodeEditor';
 import PixelCenterpiece from './PixelCenterpiece';
 import PixelFeaturedProjects from './PixelFeaturedProjects';
 import PixelPlans from './PixelPlans';
-import PixelCircuitMaze from './PixelCircuitMaze';
 
 export default function PixelHome() {
   return (
@@ -26,9 +25,6 @@ export default function PixelHome() {
 
       {/* 5. How We Can Collaborate - Engagement Models */}
       <PixelPlans />
-
-      {/* 7. Bottom Clean CTA Section */}
-      <PixelCircuitMaze />
     </>
   );
 }

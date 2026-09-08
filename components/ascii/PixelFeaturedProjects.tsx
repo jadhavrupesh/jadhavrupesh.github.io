@@ -69,15 +69,15 @@ export default function PixelFeaturedProjects() {
   return (
     <section className="w-full max-w-screen-lg mx-auto my-12 px-4" aria-label="Featured Projects">
       {/* Section Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 flex flex-col items-center">
         <p className="text-[10px] tracking-[2px] text-cyan-400 font-bold mb-1 uppercase font-mono">
           SELECTED PRODUCTION WORK · 2020 – 2025
         </p>
-        <h2 className="text-2xl md:text-3xl font-bold text-white font-mono mb-2">
-          Featured Mobile & Multiplatform Apps.
+        <h2 className="text-2xl md:text-3xl font-bold text-white font-mono mb-2 text-balance">
+          Featured Mobile &amp; Multiplatform Apps.
         </h2>
-        <p className="text-sm md:text-base text-purple-200 font-mono max-w-2xl mx-auto">
-          Production Flutter, Compose Multiplatform & KMP applications built with Clean Architecture, offline resilience, and 60fps performance.
+        <p className="text-sm md:text-base text-purple-200 font-mono leading-relaxed max-w-xl mx-auto text-balance">
+          Production Flutter, Compose Multiplatform &amp; KMP applications built with Clean Architecture, offline resilience, and 60fps performance.
         </p>
       </div>
 
