@@ -6,7 +6,6 @@ const NAV_ITEMS = [
   { label: 'Experience', path: '/experience' },
   { label: 'Skills', path: '/skills' },
   { label: 'Projects', path: '/projects' },
-  { label: 'Contact', path: '/contact' },
 ];
 
 export default function Sidebar() {
