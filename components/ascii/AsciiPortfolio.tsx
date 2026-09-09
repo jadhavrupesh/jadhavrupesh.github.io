@@ -1,13 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { personalInfo, projectData } from '../../constants';
-import AsciiDie from './AsciiDie';
 import AsciiPlayground from './AsciiPlayground';
 import PortfolioContent from './PortfolioContent';
 import PixelHome from './PixelHome';
 import ThemeTransitionOverlay from './ThemeTransitionOverlay';
 
-import { JulesSquidLogo, DownArrowIcon } from './JulesIcons';
+import { DownArrowIcon } from './JulesIcons';
 import AmbientPixelSparkles from './AmbientPixelSparkles';
 
 const directories = [
@@ -18,6 +17,9 @@ const directories = [
   { path: '/projects', label: 'Projects', title: 'From idea to shipped.' },
   { path: '/contact', label: 'Contact', title: 'Let’s build something.' },
 ] as const;
+
+// Menu items shown in the header navigation (contact option removed from menu)
+const navItems = directories.filter(item => item.path !== '/contact');
 
 export default function AsciiPortfolio() {
   const [theme, setTheme] = useState<'ascii' | 'pixel'>(() => {
@@ -81,6 +83,15 @@ export default function AsciiPortfolio() {
     document.title = `Rupesh Jadhav — ${current.path === '/' ? `${theme === 'pixel' ? 'Pixel' : 'ASCII'} Portfolio` : current.label}`;
   }, [current, theme]);
 
+  // Don't let the browser restore a mid-page scroll, and always land at the
+  // top of the home view when returning to it (react-router keeps scroll).
+  useEffect(() => {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  }, []);
+  useEffect(() => {
+    if (current.path === '/') window.scrollTo(0, 0);
+  }, [current]);
+
   useEffect(() => {
     if (current.path !== '/') {
       if (!dialog.current?.open) dialog.current?.showModal();
@@ -108,13 +119,13 @@ export default function AsciiPortfolio() {
     <header className="terminal-header">
       {theme === 'pixel' ? (
         <Link className="pixel-nav-brand" to="/" aria-label="Rupesh Jadhav, home">
-          <JulesSquidLogo className="pixel-header-squid" />
+          <img src="/jules/jules-pixelated.png" alt="" aria-hidden="true" width={34} height={34} className="pixel-header-squid pixelated-img" />
           <span className="pixel-brand-text">RUPESH</span>
         </Link>
       ) : (
         <Link className="terminal-brand" to="/" aria-label="Rupesh Jadhav, home">RJ</Link>
       )}
-      <nav className="terminal-nav" aria-label="Main navigation">{directories.map(item => <Link key={item.path} to={item.path} aria-current={current.path === item.path ? 'page' : undefined}><span className="nav-bracket">[</span>{item.label.toLowerCase()}<span className="nav-bracket">]</span></Link>)}</nav>
+      <nav className="terminal-nav" aria-label="Main navigation">{navItems.map(item => <Link key={item.path} to={item.path} aria-current={current.path === item.path ? 'page' : undefined}><span className="nav-bracket">[</span>{item.label.toLowerCase()}<span className="nav-bracket">]</span></Link>)}</nav>
       <div className="header-actions">
         {theme === 'pixel' && (
           <>
@@ -127,14 +138,6 @@ export default function AsciiPortfolio() {
             </Link>
           </>
         )}
-        <AsciiDie
-          pixel={theme === 'pixel'}
-          onThemeChange={origin => {
-            const currentEffectiveTheme = document.documentElement.dataset.theme === 'pixel' ? 'pixel' : (theme === 'pixel' ? 'pixel' : 'ascii');
-            const targetTheme = currentEffectiveTheme === 'pixel' ? 'ascii' : 'pixel';
-            triggerThemeChange(targetTheme, origin);
-          }}
-        />
       </div>
     </header>
 

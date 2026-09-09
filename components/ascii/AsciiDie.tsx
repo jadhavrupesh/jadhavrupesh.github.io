@@ -67,6 +67,7 @@ export default function AsciiDie({ pixel, onThemeChange }: { pixel: boolean; onT
   const [result, setResult] = useState<number | null>(lastResult);
   const [isRolling, setIsRolling] = useState(false);
   const onThemeChangeRef = useRef(onThemeChange);
+  const pixelRef = useRef(pixel);
   const safetyTimer = useRef<number | null>(null);
   const requestRef = useRef<number>(0);
   const lastFrameRef = useRef<number>(0);
@@ -74,6 +75,7 @@ export default function AsciiDie({ pixel, onThemeChange }: { pixel: boolean; onT
 
   useEffect(() => {
     onThemeChangeRef.current = onThemeChange;
+    pixelRef.current = pixel;
   });
 
   useEffect(() => {
@@ -167,7 +169,10 @@ export default function AsciiDie({ pixel, onThemeChange }: { pixel: boolean; onT
         if (progress === 1) {
           completeRoll(roll.current.value);
         }
-      } else if (now >= holdUntil.current && !focused.current) {
+      } else if (now >= holdUntil.current && !focused.current && !pixelRef.current) {
+        // Idle auto-rotation only in the ASCII theme. In the pixel theme the
+        // switcher stays still so it doesn't compete with the hero wordmark;
+        // it only animates during an actual roll (theme switch).
         angles.current = [angles.current[0] + elapsed * .6, angles.current[1] + elapsed * 1.02, angles.current[2] + elapsed * .48];
       }
       draw();

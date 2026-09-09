@@ -17,6 +17,35 @@ html[data-theme='pixel'] {
   --pixel-cut-sm: polygon(0px calc(100% - 10px), 10px calc(100% - 10px), 10px 100%, calc(100% - 10px) 100%, calc(100% - 10px) calc(100% - 10px), 100% calc(100% - 10px), 100% 10px, calc(100% - 10px) 10px, calc(100% - 10px) 0px, 10px 0px, 10px 10px, 0px 10px);
 }
 
+/* Chunky pixel-art pointer, redrawn as a pixel grid, replacing the OS cursor
+   throughout the pixel theme. Tip hotspot at 0 0. */
+html[data-theme='pixel'],
+html[data-theme='pixel'] *,
+html[data-theme='pixel'] a,
+html[data-theme='pixel'] button,
+html[data-theme='pixel'] summary,
+html[data-theme='pixel'] label,
+html[data-theme='pixel'] [role='button'] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='34' viewBox='0 0 12 17' shape-rendering='crispEdges'%3E%3Cg fill='%23ffffff'%3E%3Crect x='1' y='2' width='1' height='1'/%3E%3Crect x='1' y='3' width='2' height='1'/%3E%3Crect x='1' y='4' width='3' height='1'/%3E%3Crect x='1' y='5' width='4' height='1'/%3E%3Crect x='1' y='6' width='5' height='1'/%3E%3Crect x='1' y='7' width='6' height='1'/%3E%3Crect x='1' y='8' width='7' height='1'/%3E%3Crect x='1' y='9' width='8' height='1'/%3E%3Crect x='1' y='10' width='5' height='1'/%3E%3Crect x='1' y='11' width='2' height='1'/%3E%3Crect x='4' y='11' width='2' height='1'/%3E%3Crect x='1' y='12' width='1' height='1'/%3E%3Crect x='5' y='12' width='2' height='1'/%3E%3Crect x='5' y='13' width='2' height='1'/%3E%3Crect x='6' y='14' width='2' height='1'/%3E%3Crect x='6' y='15' width='2' height='1'/%3E%3C/g%3E%3Cg fill='%231a0233'%3E%3Crect x='0' y='0' width='1' height='15'/%3E%3Crect x='1' y='1' width='1' height='1'/%3E%3Crect x='2' y='2' width='1' height='1'/%3E%3Crect x='3' y='3' width='1' height='1'/%3E%3Crect x='4' y='4' width='1' height='1'/%3E%3Crect x='5' y='5' width='1' height='1'/%3E%3Crect x='6' y='6' width='1' height='1'/%3E%3Crect x='7' y='7' width='1' height='1'/%3E%3Crect x='8' y='8' width='1' height='1'/%3E%3Crect x='9' y='9' width='1' height='1'/%3E%3Crect x='6' y='10' width='5' height='1'/%3E%3Crect x='3' y='11' width='1' height='1'/%3E%3Crect x='6' y='11' width='1' height='1'/%3E%3Crect x='2' y='12' width='1' height='1'/%3E%3Crect x='4' y='12' width='1' height='1'/%3E%3Crect x='7' y='12' width='1' height='1'/%3E%3Crect x='1' y='13' width='1' height='1'/%3E%3Crect x='4' y='13' width='1' height='1'/%3E%3Crect x='7' y='13' width='1' height='1'/%3E%3Crect x='5' y='14' width='1' height='1'/%3E%3Crect x='8' y='14' width='1' height='1'/%3E%3Crect x='5' y='15' width='1' height='1'/%3E%3Crect x='8' y='15' width='1' height='1'/%3E%3Crect x='6' y='16' width='2' height='1'/%3E%3C/g%3E%3C/svg%3E") 0 0, auto !important;
+}
+html[data-theme='pixel'] input,
+html[data-theme='pixel'] textarea,
+html[data-theme='pixel'] [contenteditable='true'] {
+  cursor: text !important;
+}
+
+/* Ban text selection in the pixel theme — click only. Form fields keep it. */
+html[data-theme='pixel'] body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+html[data-theme='pixel'] input,
+html[data-theme='pixel'] textarea,
+html[data-theme='pixel'] [contenteditable='true'] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 html[data-theme='pixel'] body {
   background-color: var(--bg);
   color: var(--ink);
@@ -58,7 +87,10 @@ html[data-theme='pixel'] .system-bar { display: none; }
   background-size: 1.4em !important;
 }
 .pattern-tentacle {
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAKAQMAAABhWYebAAAABlBMVEUAAABVKqx/G3Z/AAAAAXRSTlMAQObYZgAAACtJREFUCNdj+M/AwfC/QYLh/zELhv/PKhj+//8BxsZAbAjEDP8/MDDUPwAAjukUhWE2d64AAAAASUVORK5CYII=") 50% repeat-x;
+  /* Exact wave from jules.google: a 21x10 PNG tile repeated horizontally,
+     native size, vertically centred in the 24px line. */
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAKAQMAAABhWYebAAAABlBMVEUAAABVKqx/G3Z/AAAAAXRSTlMAQObYZgAAACtJREFUCNdj+M/AwfC/QYLh/zELhv/PKhj+//8BxsZAbAjEDP8/MDDUPwAAjukUhWE2d64AAAAASUVORK5CYII=") 50% center repeat-x;
+  transition: opacity 0.35s ease-out;
 }
 
 /* Jules Keyframes */
@@ -66,7 +98,7 @@ html[data-theme='pixel'] .system-bar { display: none; }
   0%, 100% { background-color: transparent; }
   50% { background-color: rgba(93, 67, 198, 0.5); }
 }
-@keyframes ink-appear-tentacle { 
+@keyframes ink-appear-tentacle {
   0% { opacity: 0; transform: translate(-10%); }
   100% { opacity: 0.8; transform: translate(0px); }
 }
@@ -123,9 +155,9 @@ html[data-theme='pixel'] .system-bar { display: none; }
 html[data-theme='pixel'] .terminal-header {
   height: 90px;
   border: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
 }
 .pixel-navbar-container {
@@ -135,6 +167,7 @@ html[data-theme='pixel'] .terminal-header {
   width: 100%;
 }
 .pixel-nav-brand {
+  justify-self: start;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -142,8 +175,9 @@ html[data-theme='pixel'] .terminal-header {
   text-decoration: none;
 }
 .pixel-header-squid {
-  width: 32px;
+  width: 34px;
   height: 34px;
+  object-fit: contain;
   color: var(--pixel-purple);
   transition: transform 0.2s ease, filter 0.2s ease;
 }
@@ -225,10 +259,46 @@ html[data-theme='pixel'] .terminal-header {
   transform: scale(0.96) translateY(2px) !important;
 }
 
-
-.header-actions {
+/* Nav links: plain at rest, same subtle cyan-tint box on hover as "Tiers"
+   (the Tiers button's border box-shadow is clipped by its pixel-cut, so what
+   it actually shows on hover is just the tinted background). */
+html[data-theme='pixel'] .terminal-nav {
+  justify-self: center;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 auto;
+}
+html[data-theme='pixel'] .terminal-nav a {
+  min-height: 0;
+  padding: 6px 12px;
+  color: var(--muted);
+  background: transparent;
+  justify-content: center;
+  clip-path: var(--pixel-cut-sm);
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+html[data-theme='pixel'] .terminal-nav .nav-bracket { display: none; }
+html[data-theme='pixel'] .terminal-nav a:hover,
+html[data-theme='pixel'] .terminal-nav a[aria-current='page'] {
+  transform: none;
+  color: #fff;
+  background: rgba(15, 211, 211, 0.2);
+}
+html[data-theme='pixel'] .terminal-nav a:active {
+  transform: scale(0.96) translateY(2px);
+}
+@media (max-width: 768px) {
+  html[data-theme='pixel'] .terminal-nav a { padding: 4px 7px; }
+}
+
+
+.header-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: 14px;
 }
 
@@ -1248,10 +1318,8 @@ html[data-theme='pixel'] .terminal-footer a:hover { color: var(--pixel-cyan); }
 }
 
 .pixel-hero-subtitle {
-  position: absolute;
-  bottom: 50px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  margin: -18px 0 0 0 !important;
   color: #fffbeb !important;
   background-color: #1D0245 !important;
   padding: 6px 16px !important;
@@ -1265,12 +1333,11 @@ html[data-theme='pixel'] .terminal-footer a:hover { color: var(--pixel-cyan); }
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
-  margin: 0 !important;
   z-index: 10;
 }
 @media (max-width: 768px) {
   .pixel-hero-subtitle {
-    bottom: 20px;
+    margin-top: -10px !important;
     font-size: 10px !important;
     padding: 4px 8px !important;
   }

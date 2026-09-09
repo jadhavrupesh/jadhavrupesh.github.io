@@ -33,24 +33,31 @@ const CONFIG = {
   mobileFontSize: 10.5,
   fontFamily: '"SF Mono", "Roboto Mono", "IBM Plex Mono", monospace',
   fontWeight: 'bold',
-  backgroundColor: '#1D0245',
-  textColor: '#784fcf',
-  ghostColor: 'rgba(120, 79, 207, 0.35)',
+  backgroundColor: 'transparent',
+  textColor: '#b79cf2',
+  ghostColor: 'rgba(150, 116, 224, 0.28)',
   robotColor: '#fffbeb',
   robotChar: '@',
-  ejectionIntervalMs: 3400,
+  ejectionIntervalMs: 1200,
   ejectedPieceBaseSpeed: 2.4,
   ejectedPieceDamping: 0.985,
-  maxEjectedPieces: 3,
-  initialEjectedPiecesCount: 2,
+  maxEjectedPieces: 12,
+  initialEjectedPiecesCount: 8,
+  ejectPerTick: 2,
   ejectedPieceColors: ['#E1308D', '#0FD3D3', '#F0C642', '#472394'],
+  // Persistent decorative glyphs drifting around the wordmark (Jules-style).
+  // Kept sparse — these are NOT collected by the robot, so too many just clutter.
+  ambientGlyphCount: 5,
+  ambientGlyphChars: ['M', 'W', 'x', 'K', ':', '.'],
+  ambientGlyphColors: ['#E1308D', '#0FD3D3', '#956be5', '#784fcf'],
+  ambientGlyphSpeed: 0.13,
   robotMoveInterval: 3,
   robotPickupDelay: 10,
   robotPlaceDelay: 10,
   logicalCharWidth: 104,
-  logicalCharHeight: 18,
+  logicalCharHeight: 12,
   mobileLogicalCharWidth: 60,
-  mobileLogicalCharHeight: 15,
+  mobileLogicalCharHeight: 11,
 };
 
 type Slot = {
@@ -122,6 +129,7 @@ export default function PixelHeroLogo() {
     let slots: Slot[] = [];
     let pieces: Piece[] = [];
     let sparkles: Sparkle[] = [];
+    let ambient: { x: number; y: number; vx: number; vy: number; char: string; color: string; alpha: number }[] = [];
     let rSparkleTick = 0;
 
     const robot: Robot = {
@@ -168,7 +176,7 @@ export default function PixelHeroLogo() {
       const textH = numRows * charHeight;
 
       const startX = Math.max(0, Math.floor((pixelWidth - textW) / 2));
-      const startY = Math.max(6, Math.floor((pixelHeight - textH) / 2) - Math.floor(charHeight * (isMobile ? 1.3 : 0.9)));
+      const startY = Math.max(4, Math.floor((pixelHeight - textH) / 2) - Math.floor(charHeight * (isMobile ? 0.5 : 0.3)));
 
       slots = [];
       for (let r = 0; r < numRows; r++) {
@@ -191,11 +199,29 @@ export default function PixelHeroLogo() {
       robot.col = Math.floor(startX / charWidth) + Math.floor(numCols / 2);
       robot.row = Math.floor(startY / charHeight) + numRows + 1;
 
+      // Seed persistent decorative glyphs drifting through the whole canvas,
+      // mirroring the scattered characters around the Jules wordmark.
+      const pw = logicalW * charWidth;
+      const ph = logicalH * charHeight;
+      ambient = [];
+      for (let i = 0; i < CONFIG.ambientGlyphCount; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        ambient.push({
+          x: Math.random() * pw,
+          y: Math.random() * ph,
+          vx: Math.cos(ang) * CONFIG.ambientGlyphSpeed * (0.5 + Math.random()),
+          vy: Math.sin(ang) * CONFIG.ambientGlyphSpeed * (0.5 + Math.random()),
+          char: CONFIG.ambientGlyphChars[Math.floor(Math.random() * CONFIG.ambientGlyphChars.length)],
+          color: CONFIG.ambientGlyphColors[Math.floor(Math.random() * CONFIG.ambientGlyphColors.length)],
+          alpha: 0.12 + Math.random() * 0.2,
+        });
+      }
+
       // Seed initial micro sparkles across all letters of RUPESH (R, U, P, E, S, H)
       const sparkChars = ['✦', '*', '·', '✧'];
       const sparkColors = ['#0FD3D3', '#F0C642', '#E1308D', '#fffbeb'];
-      for (let i = 0; i < 12; i++) {
-        const slot = slots[Math.floor((i / 12) * slots.length)];
+      for (let i = 0; i < 5; i++) {
+        const slot = slots[Math.floor((i / 5) * slots.length)];
         if (slot) {
           sparkles.push({
             x: slot.x + (Math.random() * 16 - 8),
@@ -233,9 +259,10 @@ export default function PixelHeroLogo() {
       });
     };
 
-    // Seed 2 initial loose pieces
+    // Seed a healthy cloud of loose pieces for the robot to reassemble.
+    // The ghost glyph keeps the word readable, so any slot is fair game.
     if (!prefersReducedMotion) {
-      const candidates = slots.filter(s => !['M', 'W'].includes(s.char));
+      const candidates = [...slots];
       for (let i = 0; i < CONFIG.initialEjectedPiecesCount && candidates.length > 0; i++) {
         const idx = Math.floor(Math.random() * candidates.length);
         const chosen = candidates.splice(idx, 1)[0];
@@ -283,12 +310,13 @@ export default function PixelHeroLogo() {
       const pixelWidth = logicalW * charWidth;
       const pixelHeight = logicalH * charHeight;
 
-      // Eject accumulator: occasionally eject a non-structural contour character
+      // Eject accumulator: keep several loose pieces in flight at all times.
       ejectAccum += dt;
       if (ejectAccum >= CONFIG.ejectionIntervalMs && pieces.length < CONFIG.maxEjectedPieces) {
         ejectAccum -= CONFIG.ejectionIntervalMs;
-        const candidates = slots.filter(s => !s.empty && !s.targeted && !['M', 'W', 'N'].includes(s.char));
-        if (candidates.length > 0) {
+        for (let n = 0; n < CONFIG.ejectPerTick; n++) {
+          const candidates = slots.filter(s => !s.empty && !s.targeted);
+          if (candidates.length === 0) break;
           ejectPiece(candidates[Math.floor(Math.random() * candidates.length)]);
         }
       }
@@ -434,7 +462,7 @@ export default function PixelHeroLogo() {
 
       // Continuous micro sparkles dancing across all letters of RUPESH (R, U, P, E, S, H)
       rSparkleTick++;
-      if (rSparkleTick >= 6 && !prefersReducedMotion) {
+      if (rSparkleTick >= 16 && !prefersReducedMotion) {
         rSparkleTick = 0;
         if (slots.length > 0) {
           const slot = slots[Math.floor(Math.random() * slots.length)];
@@ -465,19 +493,40 @@ export default function PixelHeroLogo() {
           sparkles.splice(i, 1);
         }
       }
+
+      // Drift the persistent ambient glyphs, wrapping them around the canvas.
+      const aw = logicalW * charWidth;
+      const ah = logicalH * charHeight;
+      for (const g of ambient) {
+        g.x += g.vx;
+        g.y += g.vy;
+        if (g.x < -charWidth) g.x = aw + charWidth;
+        else if (g.x > aw + charWidth) g.x = -charWidth;
+        if (g.y < -charHeight) g.y = ah + charHeight;
+        else if (g.y > ah + charHeight) g.y = -charHeight;
+      }
     };
 
     const render = () => {
       const pixelWidth = logicalW * charWidth;
       const pixelHeight = logicalH * charHeight;
 
-      // 1. Background
-      ctx.fillStyle = CONFIG.backgroundColor;
-      ctx.fillRect(0, 0, pixelWidth, pixelHeight);
+      // 1. Background — transparent so the wordmark blends into the page
+      //    gradient instead of sitting in a hard-edged rectangle.
+      ctx.clearRect(0, 0, pixelWidth, pixelHeight);
 
       ctx.font = `${CONFIG.fontWeight} ${fontSize}px ${CONFIG.fontFamily}`;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
+
+      // 1b. Ambient drifting glyphs behind the wordmark.
+      ctx.save();
+      for (const g of ambient) {
+        ctx.globalAlpha = g.alpha;
+        ctx.fillStyle = g.color;
+        ctx.fillText(g.char, g.x, g.y);
+      }
+      ctx.restore();
 
       // 2. Render wordmark slots (filled characters solid, empty slots subtle ghost characters)
       for (let i = 0; i < slots.length; i++) {
@@ -555,7 +604,7 @@ export default function PixelHeroLogo() {
   }, []);
 
   return (
-    <div className="relative flex justify-center items-center mt-4 md:mt-0 w-full">
+    <div className="relative flex flex-col justify-center items-center mt-2 md:mt-0 w-full">
       <canvas ref={canvasRef} className="block w-full h-auto pixelated-img max-w-[1000px] mx-auto" />
       <div role="heading" aria-level={1} className="pixel-hero-subtitle">
         Senior Flutter &amp; Kotlin Developer · 5+ yrs · Mumbai
