@@ -23,8 +23,8 @@ const navItems = directories.filter(item => item.path !== '/contact');
 
 export default function AsciiPortfolio() {
   const [theme, setTheme] = useState<'ascii' | 'pixel'>(() => {
-    try { return localStorage.getItem('portfolio-theme') === 'pixel' ? 'pixel' : 'ascii'; }
-    catch { return 'ascii'; }
+    try { return localStorage.getItem('portfolio-theme') === 'ascii' ? 'ascii' : 'pixel'; }
+    catch { return 'pixel'; }
   });
   const [transitionState, setTransitionState] = useState<{
     active: boolean;
